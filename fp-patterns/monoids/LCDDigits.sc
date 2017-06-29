@@ -39,10 +39,16 @@ import LCDDigit._
 
 val monoidInstance = implicitly[Monoid[LCDDigit]]
 
-val fiveFourSix = Seq(five, four, six)
-val digit = monoidInstance.combineAll(fiveFourSix)
+val fiveFourSix = Seq(one, one, five, four, six)
+val digit   = monoidInstance.combineAll(fiveFourSix)
+val nothing = monoidInstance.combineAll(List())
 
 println(digit.show)
   // ._. ._. ... ._.
   // |.| |_. |_| |_.
   // |_| ._| ..| |_|
+
+println(nothing.show)
+// ._.
+// |.|
+// |_|
