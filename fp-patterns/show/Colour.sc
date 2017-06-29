@@ -1,6 +1,6 @@
 import $ivy.`org.typelevel::cats:0.9.0`, cats.Show
 
-abstract sealed class Colour(val name: String)
+sealed abstract class Colour(val name: String)
 
 object Colour {
   implicit val ColourShow = Show.show[Colour](_.name)
