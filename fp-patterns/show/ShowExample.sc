@@ -3,6 +3,8 @@ import $ivy.`org.typelevel::cats:0.9.0`, cats.Show
 
 import Colour._
 
-val x = implicitly[Show[Colour]].show(Red)
+val r = implicitly[Show[Colour]].show(Red)
+val b = implicitly[Show[Colour]].show(Blue)
 
-println(x)
+println(r)
+println(b)
