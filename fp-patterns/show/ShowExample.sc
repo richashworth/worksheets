@@ -1,4 +1,4 @@
-import $file.ShowInstances, ShowInstances.Colour
+import $file.Colour, Colour.Colour
 import $ivy.`org.typelevel::cats:0.9.0`, cats.Show
 
 import Colour._
