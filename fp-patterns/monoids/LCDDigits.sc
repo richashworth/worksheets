@@ -42,3 +42,6 @@ val fiveFourSix = Seq(five, four, six)
 val digit = monoidInstance.combineAll(fiveFourSix)
 
 println(digit.show)
+  // ._. ._. ... ._.
+  // |.| |_. |_| |_.
+  // |_| ._| ..| |_|
