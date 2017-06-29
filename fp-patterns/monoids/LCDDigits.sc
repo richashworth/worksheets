@@ -2,15 +2,16 @@ import $ivy.`org.typelevel::cats:0.9.0`, cats.{Monoid, Show}
 
 case class LCDDigit(firstRow: String, secondRow: String, thirdRow: String)
 
-object LCDDigit{
+object LCDDigit {
   implicit val LCDDigitShow = Show.show[LCDDigit](_.productIterator mkString "\n")
 
   implicit val ConcatLCDigitMonoid = new Monoid[LCDDigit]{
     override def empty = LCDDigit.zero
     override def combine(l1: LCDDigit, l2: LCDDigit): LCDDigit =
-      LCDDigit(l1.firstRow  + " " + l2.firstRow,
-               l1.secondRow + " " + l2.secondRow,
-               l1.thirdRow  + " " + l2.thirdRow)
+      LCDDigit(
+        l1.firstRow  + " " + l2.firstRow,
+        l1.secondRow + " " + l2.secondRow,
+        l1.thirdRow  + " " + l2.thirdRow)
   }
 
   implicit class LCDDigitExtensions(l1: LCDDigit){
