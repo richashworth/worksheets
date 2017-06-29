@@ -1,50 +1,44 @@
-import $ivy.`org.typelevel::cats:0.9.0`, cats.Monoid
+import $ivy.`org.typelevel::cats:0.9.0`, cats.{Monoid, Show}
 
-// Our domain entity
-case class LCDDigit(line1: String, line2: String, )
+case class LCDDigit(firstRow: String, secondRow: String, thirdRow: String)
 
-// Some example data
-val c1 = Company("A", 10)
-val c2 = Company("B", 20)
-val c3 = Company("C", 30)
-val c4 = Company("D", 40)
+object LCDDigit{
+  implicit val LCDDigitShow = Show.show[LCDDigit](_.productIterator mkString "\n")
 
-val cs = List(c1, c2, c3, c4)
+  implicit val ConcatLCDigitMonoid = new Monoid[LCDDigit]{
+    override def empty = LCDDigit.zero
+    override def combine(l1: LCDDigit, l2: LCDDigit): LCDDigit =
+      LCDDigit(l1.firstRow  + " " + l2.firstRow,
+               l1.secondRow + " " + l2.secondRow,
+               l1.thirdRow  + " " + l2.thirdRow)
+  }
 
-// Monoids describe an aggregation pattern.
-// We provide two such context-specific aggregations below:
+  implicit class LCDDigitExtensions(l1: LCDDigit){
+    def show = LCDDigitShow.show(l1)
+    def merge(l2: LCDDigit) = ConcatLCDigitMonoid.combine(l1, l2)
+  }
 
-implicit val CompanyMergeMonoid = new Monoid[Company] {
-  def empty = Company("", 0)
-  def combine(t1: Company, t2: Company) =
-    Company(t1.name + t2.name, t1.value + t2.value)
+  object zero extends LCDDigit(
+    "._.",
+    "|.|",
+    "|_|"
+  )
+  object one   extends LCDDigit("...", "..|", "..|")
+  object two   extends LCDDigit("._.", "._|", "|_.")
+  object three extends LCDDigit("._.", "._|", "._|")
+  object four  extends LCDDigit("...", "|_|", "..|")
+  object five  extends LCDDigit("._.", "|_.", "._|")
+  object six   extends LCDDigit("._.", "|_.", "|_|")
+  object seven extends LCDDigit("._.", "..|", "..|")
+  object eight extends LCDDigit("._.", "|_|", "|_|")
+  object nine  extends LCDDigit("._.", "|_|", "..|")
 }
 
-implicit val EliminateCompetitorsMonoid = new Monoid[Company] {
-  def empty = Company("", 0)
-  def combine(t1: Company, t2: Company) = Set(t1, t2).maxBy(_.value)
-}
+import LCDDigit._
 
-import Monoid._
+val monoidInstance = implicitly[Monoid[LCDDigit]]
 
-// Need to explicitly pass the monoid instance if there is more than one in scope
-val r1 = combineAll(cs)(CompanyMergeMonoid)
-val r2 = combineAll(cs)(EliminateCompetitorsMonoid)
-val r3 = combineAll(List())(EliminateCompetitorsMonoid)
+val fiveFourSix = Seq(five, four, six)
+val digit = monoidInstance.combineAll(fiveFourSix)
 
-println(r1)
-// Company(ABCD,100)
-
-println(r2)
-// Company(D,40)
-
-println(r3)
-// Company(,0)
-
-// Couldn't we have just used a fold instead?
-// -- Yes, but the benefit of defining a separate monoid instance is that we have abstracted the
-//    mechanics of aggregation from the business logic
-val x = cs.foldLeft(Company("", 0))((a,b) => Company(a.name + b.name, a.value + b.value))
-
-println(x)
-// Company(ABCD,100)
+println(digit.show)
