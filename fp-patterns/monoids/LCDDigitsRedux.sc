@@ -19,20 +19,20 @@ object LCDDigit {
     def merge(l2: LCDDigit) = ConcatLCDigitMonoid.combine(l1, l2)
   }
 
-  object zero extends LCDDigit(
+  val zero = LCDDigit(
     "._.",
     "|.|",
     "|_|"
   )
-  object one   extends LCDDigit("...", "..|", "..|")
-  object two   extends LCDDigit("._.", "._|", "|_.")
-  object three extends LCDDigit("._.", "._|", "._|")
-  object four  extends LCDDigit("...", "|_|", "..|")
-  object five  extends LCDDigit("._.", "|_.", "._|")
-  object six   extends LCDDigit("._.", "|_.", "|_|")
-  object seven extends LCDDigit("._.", "..|", "..|")
-  object eight extends LCDDigit("._.", "|_|", "|_|")
-  object nine  extends LCDDigit("._.", "|_|", "..|")
+  val one   = LCDDigit("...", "..|", "..|")
+  val two   = LCDDigit("._.", "._|", "|_.")
+  val three = LCDDigit("._.", "._|", "._|")
+  val four  = LCDDigit("...", "|_|", "..|")
+  val five  = LCDDigit("._.", "|_.", "._|")
+  val six   = LCDDigit("._.", "|_.", "|_|")
+  val seven = LCDDigit("._.", "..|", "..|")
+  val eight = LCDDigit("._.", "|_|", "|_|")
+  val nine  = LCDDigit("._.", "|_|", "..|")
 }
 
 import LCDDigit._
@@ -55,7 +55,8 @@ println(noDigits.show)
 // Enable the infix |+| semigroup operator for combining monoids (which are SGs)
 import cats.implicits._
 
-val sixNine = (six: LCDDigit) |+| (nine: LCDDigit)
+val sixNine = six |+| nine
+
 println(sixNine.show)
 // ._. ._.
 // |_. |_|
