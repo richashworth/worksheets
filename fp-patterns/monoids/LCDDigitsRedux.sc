@@ -6,7 +6,7 @@ object LCDDigit {
   implicit val LCDDigitShow = Show.show[LCDDigit](_.productIterator mkString "\n")
 
   implicit val ConcatLCDigitMonoid = new Monoid[LCDDigit]{
-    override def empty = LCDDigit.zero
+    override def empty = LCDDigit("", "", "")
     override def combine(l1: LCDDigit, l2: LCDDigit): LCDDigit =
       LCDDigit(
         l1.firstRow  + " " + l2.firstRow,
@@ -39,18 +39,18 @@ import LCDDigit._
 
 val monoidInstance = implicitly[Monoid[LCDDigit]]
 
-val fiveFourSix = Seq(one, one, five, four, six)
+val fiveFourSix = Seq(five, four, six)
 val digits = monoidInstance.combineAll(fiveFourSix)
 println(digits.show)
-  // ._. ._. ... ._.
-  // |.| |_. |_| |_.
-  // |_| ._| ..| |_|
+  // ._. ... ._.
+  // |_. |_| |_.
+  // ._| ..| |_|
 
 val noDigits = monoidInstance.combineAll(List())
 println(noDigits.show)
-  // ._.
-  // |.|
-  // |_|
+  //
+  //
+  //
 
 // Enable the infix |+| semigroup operator for combining monoids (which are SGs)
 import cats.implicits._
