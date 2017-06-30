@@ -41,7 +41,6 @@ val monoidInstance = implicitly[Monoid[LCDDigit]]
 
 val fiveFourSix = Seq(one, one, five, four, six)
 val digits = monoidInstance.combineAll(fiveFourSix)
-
 println(digits.show)
   // ._. ._. ... ._.
   // |.| |_. |_| |_.
@@ -53,8 +52,11 @@ println(noDigits.show)
 // |.|
 // |_|
 
-// Enable the infix |+| semigroup operator for combining monoids
+// Enable the infix |+| semigroup operator for combining monoids (which are SGs)
 import cats.implicits._
 
 val sixNine = (six: LCDDigit) |+| (nine: LCDDigit)
 println(sixNine.show)
+// ._. ._.
+// |_. |_|
+// |_| ..|
