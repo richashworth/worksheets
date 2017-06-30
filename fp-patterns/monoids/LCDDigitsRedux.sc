@@ -55,9 +55,9 @@ println(noDigits.show)
 // Enable the infix |+| semigroup operator for combining monoids (which are SGs)
 import cats.implicits._
 
-val sixNine = six |+| nine
+val ten = one |+| zero
 
-println(sixNine.show)
-// ._. ._.
-// |_. |_|
-// |_| ..|
+println(ten.show)
+// ... ._.
+// ..| |.|
+// ..| |_|
