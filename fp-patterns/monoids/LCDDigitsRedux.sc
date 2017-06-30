@@ -48,9 +48,9 @@ println(digits.show)
 
 val noDigits = monoidInstance.combineAll(List())
 println(noDigits.show)
-// ._.
-// |.|
-// |_|
+  // ._.
+  // |.|
+  // |_|
 
 // Enable the infix |+| semigroup operator for combining monoids (which are SGs)
 import cats.implicits._
@@ -58,6 +58,6 @@ import cats.implicits._
 val ten = one |+| zero
 
 println(ten.show)
-// ... ._.
-// ..| |.|
-// ..| |_|
+  // ... ._.
+  // ..| |.|
+  // ..| |_|
