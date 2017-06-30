@@ -40,15 +40,21 @@ import LCDDigit._
 val monoidInstance = implicitly[Monoid[LCDDigit]]
 
 val fiveFourSix = Seq(one, one, five, four, six)
-val digit   = monoidInstance.combineAll(fiveFourSix)
-val nothing = monoidInstance.combineAll(List())
+val digits = monoidInstance.combineAll(fiveFourSix)
 
-println(digit.show)
+println(digits.show)
   // ._. ._. ... ._.
   // |.| |_. |_| |_.
   // |_| ._| ..| |_|
 
-println(nothing.show)
+val noDigits = monoidInstance.combineAll(List())
+println(noDigits.show)
 // ._.
 // |.|
 // |_|
+
+// Enable the infix |+| semigroup operator for combining monoids
+import cats.implicits._
+
+val sixNine = (six: LCDDigit) |+| (nine: LCDDigit)
+println(sixNine.show)
