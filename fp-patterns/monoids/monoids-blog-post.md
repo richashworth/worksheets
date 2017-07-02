@@ -3,7 +3,7 @@ type, a monoid instance can be used to abstract the mechanics of the aggregation
 business logic.  In this post, we will use the 'LCD Digits' kata that we [tackled
 previously](http://richashworth.com/2016/01/lcd-digits-with-scala/) as a motivating example. The
 goal here is to transform a sequence of input digits into a string resembling their representation
-on an LCD display. For example, given the input `0123456789`, the program should produce:
+on an LCD display. For example, given the input `"0123456789"`, the program should produce:
 
 ```
 ._. ... ._. ._. ... ._. ._. ._. ._. ._.
