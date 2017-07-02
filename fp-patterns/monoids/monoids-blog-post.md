@@ -1,9 +1,10 @@
-Monoids describe an aggregation pattern: whenever we need to combine or merge values of a particular
-type, a monoid instance can be used to abstract the mechanics of the aggregation from the program's
-business logic.  In this post, we will use the [LCD Digits kata that we tackled
-previously](http://richashworth.com/2016/01/lcd-digits-with-scala/) as a motivating example. The
-goal here is to transform a sequence of input digits into a string resembling their representation
-on an LCD display. For example, given the input `"0123456789"`, the program should produce:
+Monoids are used to describe an aggregation pattern: whenever we need to combine or merge values of
+a particular type, a monoid instance can be used to abstract the mechanics of the aggregation from
+the program's business logic. In this post, we will use the [LCD Digits kata that we tackled
+previously](http://richashworth.com/2016/01/lcd-digits-with-scala/) as a motivating example for
+applying this pattern. The goal here is to transform a sequence of input digits into a string
+resembling their representation on an LCD display. For example, given the input `"0123456789"`, the
+program should produce:
 
 ```
 ._. ... ._. ._. ... ._. ._. ._. ._. ._.
@@ -11,11 +12,11 @@ on an LCD display. For example, given the input `"0123456789"`, the program shou
 |_| ..| |_. ._| ..| ._| |_| ..| |_| ..|
 ```
 
-As before, we will use a case class to represent LCD Digits a product type:
+As before, we will use a case class to represent LCD Digits as a product type:
 
 ```case class LCDDigit(firstRow: String, secondRow: String, thirdRow: String)```
 
-We can then declare each digit as an instance of `LCDDigit` in the associated companion object:
+We can then declare each digit 0-9 as an instance of this class in the associated companion object:
 
 ```
 object LCDDigit {
@@ -37,12 +38,12 @@ object LCDDigit {
 ```
 
 Whereas in our previous solution we used higher-order functions to handle the aggregation of digits,
-in this case we will define a monoid instance for our `LCDDigit` type. A monoid is a specialisation
-of a _semigroup_, i.e. a set with some associative operation `combine`, that also has some identity
-element _id_ for which the following must be true: For all elements _s_ from the underlying set _S_,
-combine(s, id) = combine(id, s) = s. In practice, these algebraic laws enable us to combine elements
-from a (possibly empty) collection. For convenience, `Monoid` is provided as a type class in the
-[cats](http://typelevel.org/cats/typeclasses/monoid.html) library as follows:
+in this version we will define a monoid instance for our `LCDDigit` type. A monoid is a
+specialisation of a _semigroup_, a set with some associative operation `combine`, that also has
+some identity element _id_ for which the following must be true: For all elements _s_ from the
+underlying set _S_, combine(s, id) = combine(id, s) = s. In practice, these algebraic laws enable us
+to combine elements from a (possibly empty) collection. For convenience, `Monoid` is provided as a
+type class in the [cats](http://typelevel.org/cats/typeclasses/monoid.html) library as follows:
 
 ```
 trait Semigroup[A] {
@@ -56,8 +57,8 @@ trait Monoid[A] extends Semigroup[A] {
 
 For our `LCDDigit` type, we construct an instance of the `Monoid` trait, specifying in the `combine`
 function how two `LCDDigit` values should be merged, and what value should be used as the identity
-element. We will add this to our companion object so that the instance becomes available in the
-implicit scope whenever the type is imported.
+element in the implementation of `empty`. We will add this instance to our companion object so that
+it becomes available in the implicit scope whenever the `LCDDigit` type is imported.
 
 ```
 import $ivy.`org.typelevel::cats:0.9.0`, cats.Monoid
@@ -72,10 +73,9 @@ implicit val ConcatMonoid = new Monoid[LCDDigit] {
 }
 ```
 
-We will omit the parsing of strings into sequences of `LCDDigit`s, since we can reuse the approach
-from our previous solution, but we will add some syntactic sugar for working with this type in
-the form of an implicit class. Also within the `LCDDigit` companion object, we declare the
-following:
+We will omit the parsing of strings into sequences of `LCDDigit`s since we can reuse the approach
+from our previous solution, but we will add some syntactic sugar for working with this type in the
+form of an implicit class. We add the following to the companion object:
 
 ```
 import $ivy.`org.typelevel::cats:0.9.0`, cats.Show
@@ -122,17 +122,18 @@ println(ten.show)
 ```
 
 The way in which `LCDDigit` elements should be combined is fairly obvious; however, suppose we are
-required to support different strategies for merging value of a particular data type. For example,
-consider the aggregation of companies (each of which have a name and a market value):
+required to support different strategies for merging values of a particular data type. For example,
+consider possible aggregations for `Company` instances (each of which have a name and a market
+value):
 
 ```
 case class Company(name: String, value: Int)
 ```
 
-One such aggregation might be to form a new company by concatenatation of their names and summing
-their values (a possible effect of a merger); another might be to remove all companies except that
-with the greatest value. We can define separate monoidal instances in the `Company` companion object
-to represent these two effects:
+One such aggregation of companies might be to form a new company by concatenating their names and
+summing their market values (simulating the possible effect of a merger); another might be to remove
+all companies except that with the highest market value. We can define separate monoidal instances
+in the `Company` companion object to represent these two effects:
 
 ```
 object Company {
@@ -149,8 +150,8 @@ object Company {
 }
 ```
 
-Because there are now two implicit instances in scope, we need to explicitly pass one when declaring
-an aggregation:
+Because there are now two implicit monoid instances in scope, we need to explicitly pass one when
+declaring an aggregation:
 
 ```
 import Monoid._
@@ -174,11 +175,11 @@ println(res2)
   // Company(D,40)
 ```
 
-The real benefit of using a monoidal approach here is that the aggregations are clearly encapsulated
-in the companion object of the domain entity, and the business logic only needs to declare that a
-particular aggregation shold be performed, without needing to specify how this should happen. This
-natural separation of concerns would not be achieved if we were to define the aggregation in line,
-using a fold:
+The benefit of using a monoidal approach here is that the aggregations are clearly encapsulated in
+the companion object of the domain entity, while the business logic only needs to declare that a
+particular aggregation should be performed without needing to specify exactly how this should
+happen. By contrast, this natural separation of concerns would not be achieved if we were to define
+the aggregation in line, using a fold:
 
 ```
 val x = cs.foldLeft(Company("", 0))((a,b) => Company(a.name + b.name, a.value + b.value))
