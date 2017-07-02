@@ -42,7 +42,7 @@ of a _semigroup_, i.e. a set with some associative operation `combine`, that als
 element _id_ for which the following must be true: For all elements _s_ from the underlying set _S_,
 combine(s, id) = combine(id, s) = s. In practice, these algebraic laws enable us to combine elements
 from a (possibly empty) collection. For convenience, `Monoid` is provided as a type class in the
-[cats library](http://typelevel.org/cats/typeclasses/monoid.html) as follows:
+[cats](http://typelevel.org/cats/typeclasses/monoid.html) library as follows:
 
 ```
 trait Semigroup[A] {
@@ -73,7 +73,7 @@ implicit val ConcatMonoid = new Monoid[LCDDigit] {
 ```
 
 We will omit the parsing of strings into sequences of `LCDDigit`s, since we can reuse the approach
-from our previous solution, but we will add some syntactic niceties for working with this type in
+from our previous solution, but we will add some syntactic sugar for working with this type in
 the form of an implicit class. Also within the `LCDDigit` companion object, we declare the
 following:
 
