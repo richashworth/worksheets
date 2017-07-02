@@ -41,7 +41,7 @@ in this case we will define a monoid instance for our `LCDDigit` type. A monoid 
 _semigroup_, i.e. a set with some associative operation `combine` defined on it that also has some
 identity element _id_ for which the following must be true: For all elements _s_ from the underlying
 set _S_, combine(s, id) = combine(id, s) = s. In practice these algebraic laws enable us to combine
-elements from a (possibly empty) collection. `Monoid` is defined as a type class in the [cats
+elements from a (possibly empty) collection. `Monoid` is provided as a type class in the [cats
 library](http://typelevel.org/cats/typeclasses/monoid.html) as follows:
 
 ```
