@@ -36,18 +36,32 @@ object LCDDigit {
 }
 ```
 
-Whereas in our previous solution we used higher-order functions to handle the aggregation of
-digits, in this case we will define a monoid instance for our `LCDDigit` type. A monoid is
-essentially a _semigroup_, i.e. a set with some associative operation `combine` defined on it that
-also has some identity element _id_ for which the following must be true: For all elements _s_ from
-the underlying set _S_, combine(s, id) = combine(id, s) = s. In practice these algebraic laws enable
-us to combine elements from a (possibly empty) collection.
-
-For our `LCDDigit` type, the following monoid instance is used to specify how two `LCDDigit` values
-should be combined, and what value should be used as the identity element. We add this to our
-companion object so that it is added to the implicit scope whenever the type is imported.
+Whereas in our previous solution we used higher-order functions to handle the aggregation of digits,
+in this case we will define a monoid instance for our `LCDDigit` type. A monoid is essentially a
+_semigroup_, i.e. a set with some associative operation `combine` defined on it that also has some
+identity element _id_ for which the following must be true: For all elements _s_ from the underlying
+set _S_, combine(s, id) = combine(id, s) = s. In practice these algebraic laws enable us to combine
+elements from a (possibly empty) collection. `Monoid` is defined as a type class in the [cats
+library](http://typelevel.org/cats/typeclasses/monoid.html) as follows:
 
 ```
+trait Semigroup[A] {
+  def combine(x: A, y: A): A
+}
+
+trait Monoid[A] extends Semigroup[A] {
+  def empty: A
+}
+```
+
+For our `LCDDigit` type, the following instance of the `Monoid` trait is used to specify how two
+`LCDDigit` values should be combined, and what value should be used as the identity element. We add
+this to our companion object so that it is added to the implicit scope whenever the type is
+imported.
+
+```
+import $ivy.`org.typelevel::cats:0.9.0`, cats.{Monoid, Show}
+
 implicit val ConcatMonoid = new Monoid[LCDDigit] {
   override def empty = LCDDigit("", "", "")
   override def combine(l1: LCDDigit, l2: LCDDigit): LCDDigit =
