@@ -95,19 +95,30 @@ import LCDDigit._
 
 val monoidInstance = implicitly[Monoid[LCDDigit]]
 
-  val fiveFourSix = Seq(five, four, six)
-  val digits = monoidInstance.combineAll(fiveFourSix)
+val fiveFourSix = Seq(five, four, six)
+val digits = monoidInstance.combineAll(fiveFourSix)
 println(digits.show)
   // ._. ... ._.
   // |_. |_| |_.
   // ._| ..| |_|
-```
 
-
-```
 val noDigits = monoidInstance.combineAll(List())
 println(noDigits.show)
   //
   //
   //
+```
+
+Because `ConcatMonoid` is also an instance of a semigroup, we can also use the infix `|+|` operator
+for combining `LCDDigit` values:
+
+```
+import cats.implicits._
+
+val ten = one |+| zero
+
+println(ten.show)
+  // ... ._.
+  // ..| |.|
+  // ..| |_|
 ```
