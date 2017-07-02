@@ -37,12 +37,12 @@ object LCDDigit {
 ```
 
 Whereas in our previous solution we used higher-order functions to handle the aggregation of digits,
-in this case we will define a monoid instance for our `LCDDigit` type. A monoid is essentially a
-_semigroup_, i.e. a set with some associative operation `combine` defined on it that also has some
-identity element _id_ for which the following must be true: For all elements _s_ from the underlying
-set _S_, combine(s, id) = combine(id, s) = s. In practice these algebraic laws enable us to combine
-elements from a (possibly empty) collection. `Monoid` is provided as a type class in the [cats
-library](http://typelevel.org/cats/typeclasses/monoid.html) as follows:
+in this case we will define a monoid instance for our `LCDDigit` type. A monoid is a specialisation
+of a _semigroup_, i.e. a set with some associative operation `combine`, that also has some identity
+element _id_ for which the following must be true: For all elements _s_ from the underlying set _S_,
+combine(s, id) = combine(id, s) = s. In practice, these algebraic laws enable us to combine elements
+from a (possibly empty) collection. For convenience, `Monoid` is provided as a type class in the
+[cats library](http://typelevel.org/cats/typeclasses/monoid.html) as follows:
 
 ```
 trait Semigroup[A] {
@@ -54,13 +54,13 @@ trait Monoid[A] extends Semigroup[A] {
 }
 ```
 
-For our `LCDDigit` type, the following instance of the `Monoid` trait is used to specify how two
-`LCDDigit` values should be combined, and what value should be used as the identity element. We add
-this to our companion object so that it is added to the implicit scope whenever the type is
-imported.
+For our `LCDDigit` type, we construct an instance of the `Monoid` trait, specifying in the `combine`
+function how two `LCDDigit` values should be merged, and what value should be used as the identity
+element. We will add this to our companion object so that the instance becomes available in the
+implicit scope whenever the type is imported.
 
 ```
-import $ivy.`org.typelevel::cats:0.9.0`, cats.{Monoid, Show}
+import $ivy.`org.typelevel::cats:0.9.0`, cats.Monoid
 
 implicit val ConcatMonoid = new Monoid[LCDDigit] {
   override def empty = LCDDigit("", "", "")
@@ -70,4 +70,44 @@ implicit val ConcatMonoid = new Monoid[LCDDigit] {
           l1.secondRow + " " + l2.secondRow,
           l1.thirdRow  + " " + l2.thirdRow)
 }
+```
+
+We will omit the parsing of strings into sequences of `LCDDigit`s, since we can reuse the approach
+from our previous solution, but we will add some syntactic niceties for working with this type in
+the form of an implicit class. Also within the `LCDDigit` companion object, we declare the
+following:
+
+```
+import $ivy.`org.typelevel::cats:0.9.0`, cats.Show
+
+implicit val ShowInstance = Show.show[LCDDigit](_.productIterator mkString "\n")
+
+implicit class Extensions(l1: LCDDigit) {
+  def show = ShowInstance.show(l1)
+  def merge(l2: LCDDigit) = ConcatMonoid.combine(l1, l2)
+}
+```
+
+This allows us to format aggregations of LCDDigits with a convenient syntax:
+
+```
+import LCDDigit._
+
+val monoidInstance = implicitly[Monoid[LCDDigit]]
+
+  val fiveFourSix = Seq(five, four, six)
+  val digits = monoidInstance.combineAll(fiveFourSix)
+println(digits.show)
+  // ._. ... ._.
+  // |_. |_| |_.
+  // ._| ..| |_|
+```
+
+
+```
+val noDigits = monoidInstance.combineAll(List())
+println(noDigits.show)
+  //
+  //
+  //
 ```
