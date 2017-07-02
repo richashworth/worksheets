@@ -36,7 +36,7 @@ object LCDDigit {
 }
 ```
 
-Whereas in our previous solution we used higher-order functions to handle the aggreagation of
+Whereas in our previous solution we used higher-order functions to handle the aggregation of
 digits, in this case we will define a monoid instance for our `LCDDigit` type. A monoid is
 essentially a _semigroup_, i.e. a set with some associative operation `combine` defined on it that
 also has some identity element _id_ for which the following must be true: For all elements _s_ from
