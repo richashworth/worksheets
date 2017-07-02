@@ -15,7 +15,7 @@ object Company {
 
   implicit val EliminateCompetitorsMonoid = new Monoid[Company] {
     def empty = Company("", 0)
-    def combine(t1: Company, t2: Company) = Set(t1, t2).maxBy(_.value)
+    def combine(t1: Company, t2: Company) = Set(t1, t2) maxBy (_.value)
   }
 }
 
