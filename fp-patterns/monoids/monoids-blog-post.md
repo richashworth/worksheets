@@ -88,7 +88,7 @@ implicit class Extensions(l1: LCDDigit) {
 }
 ```
 
-This allows us to format aggregations of LCDDigits with a convenient syntax:
+This allows us to format aggregations of LCDDigits as follows:
 
 ```
 import LCDDigit._
@@ -107,12 +107,10 @@ println(noDigits.show)
   //
   //
   //
-```
 
-Because `ConcatMonoid` is also an instance of a semigroup, we can also use the infix `|+|` operator
-for combining `LCDDigit` values:
+// Because `ConcatMonoid` is also an instance of a semigroup, we
+// can use the infix `|+|` operator for combining `LCDDigit` values:
 
-```
 import cats.implicits._
 
 val ten = one |+| zero
@@ -122,3 +120,69 @@ println(ten.show)
   // ..| |.|
   // ..| |_|
 ```
+
+The way in which `LCDDigit` elements should be combined is fairly obvious; however, suppose we are
+required to support different strategies for merging value of a particular data type. For example,
+consider the aggregation of companies (each of which have a name and a market value):
+
+```
+case class Company(name: String, value: Int)
+```
+
+One such aggregation might be to form a new company by concatenatation of their names and summing
+their values (a possible effect of a merger); another might be to remove all companies except that
+with the greatest value. We can define separate monoidal instances in the `Company` companion object
+to represent these two effects:
+
+```
+object Company {
+  implicit val CompanyMergeMonoid = new Monoid[Company] {
+    def empty = Company("", 0)
+      def combine(t1: Company, t2: Company) =
+      Company(t1.name + t2.name, t1.value + t2.value)
+  }
+
+  implicit val EliminateCompetitorsMonoid = new Monoid[Company] {
+    def empty = Company("", 0)
+      def combine(t1: Company, t2: Company) = Set(t1, t2).maxBy(_.value)
+  }
+}
+```
+
+Because there are now two implicit instances in scope, we need to explicitly pass one when declaring
+an aggregation:
+
+```
+import Monoid._
+import Company._
+
+// Some example data
+val c1 = Company("A", 10)
+val c2 = Company("B", 20)
+val c3 = Company("C", 30)
+val c4 = Company("D", 40)
+
+val cs = List(c1, c2, c3, c4)
+
+val res1 = combineAll(cs)(CompanyMergeMonoid)
+val res2 = combineAll(cs)(EliminateCompetitorsMonoid)
+
+println(res1)
+  // Company(ABCD,100)
+
+println(res2)
+  // Company(D,40)
+```
+
+The real benefit of using a monoidal approach here is that the aggregations are clearly encapsulated
+in the companion object of the domain entity, and the business logic only needs to declare that a
+particular aggregation shold be performed, without needing to specify how this should happen. This
+natural separation of concerns would not be achieved if we were to define the aggregation in line,
+using a fold:
+
+```
+val x = cs.foldLeft(Company("", 0))((a,b) => Company(a.name + b.name, a.value + b.value))
+```
+
+All code for the examples used in this post is available on
+[GitHub](https://github.com/richashworth/worksheets/tree/master/fp-patterns/monoids)
