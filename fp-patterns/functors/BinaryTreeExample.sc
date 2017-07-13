@@ -22,6 +22,6 @@ val stringTree: Tree[String] =
 println(functor.map(stringTree)(x => s"Node: $x"))
 
 //Can also use functor syntax (`map`)
-import $ivy.`org.typelevel::cats:0.9.0`, cats.syntax.functor._
+import cats.syntax.functor._
 
 println(intTree.map(_ * 10))
