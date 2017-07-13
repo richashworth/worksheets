@@ -18,11 +18,7 @@ println(functor.map(intTree)(_ + 2))
   // Leaf(5)
 
 val stringTree: Tree[String] =
-  Branch(
-    Branch(
-      Leaf("A"),
-      Leaf("B")),
-    Leaf("C"))
+  Branch(Branch(Leaf("A"), Leaf("B")), Leaf("C"))
 
 println(functor.map(stringTree)(x => s"Node: $x"))
   // Branch(Branch(Leaf(Node: A),Leaf(Node: B)),Leaf(Node: C))
