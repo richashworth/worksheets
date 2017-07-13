@@ -19,7 +19,7 @@ println(functor.map(intTree)(_ + 2))
 val stringTree: Tree[String] = 
   Branch(Branch(Leaf("A"), Leaf("B")), Leaf("C"))
 
-println(functor.map(stringTree)(x=> s"Node: $x"))
+println(functor.map(stringTree)(x => s"Node: $x"))
 
 //Can also use functor syntax (`map`)
 import $ivy.`org.typelevel::cats:0.9.0`, cats.syntax.functor._
