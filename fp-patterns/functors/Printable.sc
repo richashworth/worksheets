@@ -1,5 +1,3 @@
-import $ivy.`org.typelevel::cats:0.9.0`, cats.Functor
-
 trait Printable[A] {
   def format(value: A): String
 
