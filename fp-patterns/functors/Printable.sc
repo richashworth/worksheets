@@ -28,10 +28,10 @@ implicit val booleanPrintable =
   }
 
 println(format("hello"))
-// hello
+  // hello
 
 println(format(true))
-// yes
+  // yes
 
 final case class Box[A](value: A)
 
@@ -39,7 +39,7 @@ implicit def boxPrintable[A](implicit p: Printable[A]) =
   p.contramap[Box[A]](_.value)
 
 println(format(Box("Hi")))
-// "Hi"
+  // "Hi"
 
 println(format(Box(true)))
-// yes
+  // yes
