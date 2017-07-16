@@ -5,6 +5,26 @@
 `Functor` and `Contravariant` are specialisations of `Invariant` in cats. They are found in the
 `cats.functor` package.
 
+```
+trait Invariant[F[_]] {
+  def imap[A, B](fa: F[A])(f: A => B)(g: B => A): F[B]
+}
+
+trait Contravariant[F[_]] extends Invariant[F] {
+  def contramap[A, B](fa: F[A])(f: B => A): F[B]
+
+  def imap[A, B](fa: F[A])(f: A => B)(fi: B => A): F[B] =
+    contramap(fa)(fi)
+}
+
+trait Functor[F[_]] extends Invariant[F] {
+  def map[A, B](fa: F[A])(f: A => B): F[B]
+
+  def imap[A, B](fa: F[A])(f: A => B)(fi: B => A): F[B] =
+    map(fa)(f)
+}
+```
+
 They are useful in using a functor instances of a particular type from another type. E.g. if we have
 a `Printable[String]`, then if we can convert `Person` to `String` with some function, then we can
 use `contramap` to get a `Printable[Person]` without having to define a new instance of Printable
@@ -27,3 +47,5 @@ implicit val symbolSemigroup: Semigroup[Symbol] =
   'a |+| 'few |+| 'words
   // res7: Symbol = 'afewwords
 ```
+
+Regular functors are more common than contravariant or invariant functors, 
