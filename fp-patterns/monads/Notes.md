@@ -30,9 +30,9 @@ The monad behaviour is captured in two operations:
 
 and three laws:
 
-* *Associativity:* flatMapping over `f` and `g` is the same as flatMapping over `f` and then
+* *Associativity*: flatMapping over `f` and `g` is the same as flatMapping over `f` and then
   flatMapping over `g`.
-* *Left identity:* `pure(a).flatMap(f) == f(a)`
-* *Right identity:* `m.flatMap(pure) == m`
+* *Left identity*: `pure(a).flatMap(f) == f(a)`
+* *Right identity*: `m.flatMap(pure) == m`
 
 
