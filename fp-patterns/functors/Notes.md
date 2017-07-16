@@ -48,4 +48,6 @@ implicit val symbolSemigroup: Semigroup[Symbol] =
   // res7: Symbol = 'afewwords
 ```
 
-Regular functors are more common than contravariant or invariant functors, 
+Regular functors are more common than contravariant or invariant functors, but even these are rarely
+used on their own. They are important because they form the building blocks of Monads and
+Applicatives.
