@@ -1,6 +1,6 @@
 # Monads
 
-"A monad is a control mechanism for sequencing computations"
+> A monad is a control mechanism for sequencing computations
   -- [Advanced Scala with Cats](http://underscore.io/books/advanced-scala/)
 
 Monads allow us to provide the computation (as a function parameter to `flatMap`), and based on the
