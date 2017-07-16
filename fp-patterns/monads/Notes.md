@@ -1,7 +1,7 @@
 # Monads
 
 "A monad is a control mechanism for sequencing computations"
-  -- Advanced Scala with Cats book
+  -- [Advanced Scala with Cats](http://underscore.io/books/advanced-scala/)
 
 Monads allow us to provide the computation (as a function parameter to `flatMap`), and based on the
 type of monad, it will handle the relevant 'effect'. In the case of `Option`, this effect is that
