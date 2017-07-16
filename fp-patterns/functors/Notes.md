@@ -51,3 +51,6 @@ implicit val symbolSemigroup: Semigroup[Symbol] =
 Regular functors are more common than contravariant or invariant functors, but even these are rarely
 used on their own. They are important because they form the building blocks of Monads and
 Applicatives.
+
+Collection types that have a `map` method enable us to parallelise or distribute operations across
+them, since each application of `map` can be performed independently.
