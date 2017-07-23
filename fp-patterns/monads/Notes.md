@@ -9,6 +9,7 @@ the computation may not return a value; for `Future` the effect is asynchronous 
 
 For Lists, `flatMap` is useful for dealing with permutations and combinations:
 
+
 ```
 def numbersBetween(min: Int, max: Int): List[Int] =
   (min to max).toList
@@ -35,6 +36,8 @@ and three laws:
 * *Left Identity*: `pure(a).flatMap(f) == f(a)`
 * *Right Identity*: `m.flatMap(pure) == m`
 
+Here is a simplified version of the Monad type class:
+
 ```
 import scala.language.higherKinds
 
@@ -43,5 +46,11 @@ trait Monad[F[_]] {
 
   def flatMap[A, B](value: F[A])(func: A => F[B]): F[B]
 }
+```
+
+Note that every monads are also functors. We can define `map` in terms of `pure and flatMap`:
+
+```
+def map[A, B](value: F[A])(f: A => B): F[B] = flatMap(value)(a => pure(f(a)))
 ```
 
