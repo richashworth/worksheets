@@ -70,6 +70,7 @@ println(sumSquareWithFor(Option(3), Option(4)))
 
 case class Box[A](value: A)
 
+// Monads are about sequencing effects: here the effect (on a value) is wrapping that value in a box
 implicit val boxMonad = new Monad[Box] {
   def pure[A](value: A): Box[A] = new Box(value)
   def flatMap[A, B](boxed: Box[A])(func: A => Box[B]): Box[B] = func(boxed.value)
