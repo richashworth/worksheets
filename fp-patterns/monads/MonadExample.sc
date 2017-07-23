@@ -66,7 +66,7 @@ def sumSquareWithFor[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] =
 println(sumSquareWithFor(Option(3), Option(4)))
 // Some(25)
 
-// Let's try this for a monad instance for a higher-kinded type of our own:
+// Let's use this with a monad instance for a higher-kinded type of our own:
 
 case class Box[A](value: A)
 
