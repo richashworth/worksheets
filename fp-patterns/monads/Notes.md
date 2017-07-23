@@ -65,3 +65,8 @@ but we can use the `sumSquare` function with the following:
 
 `sumSquare(3: Id[Int], 4: Id[Int])`
 
+From Advanced Scala with Cats:
+> Scala is able to cast automatically between Id and the underlying type based on the context in
+> which they are used. The only restriction to this is that Scala cannot unify different shapes of
+> type constructor when searching for implicits. Hence our need to cast to Id[A] in the call to
+> sumSquare.
