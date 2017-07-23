@@ -32,7 +32,16 @@ and three laws:
 
 * *Associativity*: flatMapping over `f` and `g` is the same as flatMapping over `f` and then
   flatMapping over `g`.
-* *Left identity*: `pure(a).flatMap(f) == f(a)`
-* *Right identity*: `m.flatMap(pure) == m`
+* *Left Identity*: `pure(a).flatMap(f) == f(a)`
+* *Right Identity*: `m.flatMap(pure) == m`
 
+```
+import scala.language.higherKinds
+
+trait Monad[F[_]] {
+  def pure[A](a: A): F[A]
+
+  def flatMap[A, B](value: F[A])(func: A => F[B]): F[B]
+}
+```
 
