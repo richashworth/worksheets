@@ -54,3 +54,14 @@ Note that every monads are also functors. We can define `map` in terms of `pure 
 def map[A, B](value: F[A])(f: A => B): F[B] = flatMap(value)(a => pure(f(a)))
 ```
 
+## The Identity Monad
+
+The `Id` monad bridges the gap between monadic and non-monadic code. For example, the following does
+not compile:
+
+`sumSquare(3, 4)`
+
+but we can use the `sumSquare` function with the following:
+
+`sumSquare(3: Id[Int], 4: Id[Int])`
+
