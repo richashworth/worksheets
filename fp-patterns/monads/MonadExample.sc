@@ -29,9 +29,8 @@ println(opt3)
 // This is used for subsequent calls to pure and flatMap
 import scala.concurrent.ExecutionContext.Implicits.global
 
-// Cats provides syntactic sugar for working with monads.
-// Note that _.pure comes from Applicative; _.flatMap comes from FlatMap and _.map from Functor
-// (which Applicative extends)
+// Cats provides syntactic sugar for working with monads.  Note that _.pure comes from Applicative;
+// _.flatMap comes from FlatMap; and _.map from Functor (which Applicative extends)
 
 import cats.syntax.applicative._
 
@@ -40,18 +39,46 @@ println(helloOpt)
 
 // We can write functions that act on Monads:
 
-import scala.language.higherKinds
-import cats.syntax.functor._
 import cats.syntax.flatMap._
+import cats.syntax.functor._
+import scala.language.higherKinds
 
 def sumSquare[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] =
     a.flatMap(x => b.map(y => x*x + y*y))
 
-import cats.instances.option._
 import cats.instances.list._
+import cats.instances.option._
 
-sumSquare(Option(3), Option(4))
-// res8: Option[Int] = Some(25)
-//
-// sumSquare(List(1, 2, 3), List(4, 5))
-// // res9: List[Int] = List(17, 26, 20, 29, 25, 34)
+println(sumSquare(Option(3), Option(4)))
+// Some(25)
+
+println(sumSquare(List(1, 2, 3), List(4, 5)))
+// List(17, 26, 20, 29, 25, 34)
+
+// We can rewrite calls to flatMap and map as a for comprehension:
+
+def sumSquareWithFor[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] = 
+  for {
+   x <- a
+   y <- b
+  } yield (x * x) + (y * y)
+
+println(sumSquareWithFor(Option(3), Option(4)))
+// Some(25)
+
+// Let's try this for a monad instance for a type of our own:
+
+case class Box[A](value: A)
+
+implicit val boxMonad = new Monad[Box] {
+  def pure[A](value: A): Box[A] = new Box(value)
+  def flatMap[A, B](boxed: Box[A])(func: A => Box[B]): Box[B] = func(boxed.value)
+  def tailRecM[A, B](a: A)(f: (A) ⇒ Box[Either[A, B]]): Box[B] = ???
+}
+
+val a = Box(3)
+val b = Box(4)
+
+val newBox = sumSquareWithFor(a, b)
+println(newBox)
+// Box(25)
