@@ -80,7 +80,20 @@ From Advanced Scala with Cats:
 
 ## Either
 
+Either allows us to implement fail-fast error handling.
+
 As of scala 2.12, `Either` is now right-biased: the right side is always the success case.
 
 `cats.syntax.either._` allows us to write `2.asRight[String]`, as opposed to `Right(2)`. This helps
-with type inference, as the expression is of type `Either[String, Int]`, rather than `Right[Int]`.
+with type inference, as the expression is of type `Either[String, Int]`, rather than `Right[Nothing,
+Int]`.
+
+## Eval
+
+`cats.Eval` provides an abstraction for three forms of evaluation:
+
+* *now* — eager, memoized (equivalent to `val`)
+* *later* — lazy, memoized (equivalent to `lazy val`)
+* *always* — lazy, not memoized (equivalent to `def`)
+
+
