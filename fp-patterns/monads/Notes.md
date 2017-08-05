@@ -92,8 +92,27 @@ Int]`.
 
 `cats.Eval` provides an abstraction for three forms of evaluation:
 
-* *now* — eager, memoized (equivalent to `val`)
-* *later* — lazy, memoized (equivalent to `lazy val`)
-* *always* — lazy, not memoized (equivalent to `def`)
+* `Eval.Now` — eager, memoized (equivalent to `val`)
+* `Eval.Later` — lazy, memoized (equivalent to `lazy val`)
+* `Eval.Always` — lazy, not memoized (equivalent to `def`)
 
+For example, we can write:
 
+```
+import cats.Eval
+
+val now = Eval.now(1 + 2)
+val later = Eval.later(3 + 4)
+val always = Eval.always(5 + 6)
+```
+
+The `value` method on `Eval` is used to extract the result:
+
+```
+println(now.value)
+// 3
+```
+
+Because `Eval` is a monad, we can use `map` and `flatMap` to sequence computations in a chain. Note
+that the chain is not evaluated until we call `result`. This helps separate the description and
+execution of a program.
