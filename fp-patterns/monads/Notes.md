@@ -9,7 +9,6 @@ the computation may not return a value; for `Future` the effect is asynchronous 
 
 For Lists, `flatMap` is useful for dealing with permutations and combinations:
 
-
 ```
 def numbersBetween(min: Int, max: Int): List[Int] =
   (min to max).toList
@@ -56,6 +55,14 @@ def map[A, B](value: F[A])(f: A => B): F[B] = flatMap(value)(a => pure(f(a)))
 
 ## The Identity Monad
 
+```
+import cats.Id
+
+val res = sumSquare(3: Id[Int], 4: Id[Int])
+println(res)
+// res: cats.Id[Int] = 25
+```
+
 The `Id` monad bridges the gap between monadic and non-monadic code. For example, the following does
 not compile:
 
@@ -70,3 +77,10 @@ From Advanced Scala with Cats:
 > which they are used. The only restriction to this is that Scala cannot unify different shapes of
 > type constructor when searching for implicits. Hence our need to cast to Id[A] in the call to
 > sumSquare.
+
+## Either
+
+As of scala 2.12, `Either` is now right-biased: the right side is always the success case.
+
+`cats.syntax.either._` allows us to write `2.asRight[String]`, as opposed to `Right(2)`. This helps
+with type inference, as the expression is of type `Either[String, Int]`, rather than `Right[Int]`.

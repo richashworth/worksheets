@@ -1,5 +1,4 @@
 import $ivy.`org.typelevel::cats:0.9.0`
-import $ivy.`com.lihaoyi::utest:0.4.8`
 
 import scala.language.higherKinds
 import cats.Monad
