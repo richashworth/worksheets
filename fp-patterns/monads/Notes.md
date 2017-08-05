@@ -116,3 +116,13 @@ println(now.value)
 Because `Eval` is a monad, we can use `map` and `flatMap` to sequence computations in a chain. Note
 that the chain is not evaluated until we call `result`. This helps separate the description and
 execution of a program.
+
+We can use `Eval.defer` to make an existing operation stack-safe, e.g.:
+
+```
+def factorial(n: BigInt): Eval[BigInt] =
+  if(n == 1) Eval.now(n)
+  else Eval.defer(factorial(n - 1).map(_ * n))
+```
+
+TODO: create a worksheet and do the foldRight exercise
