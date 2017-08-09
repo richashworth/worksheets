@@ -125,4 +125,47 @@ def factorial(n: BigInt): Eval[BigInt] =
   else Eval.defer(factorial(n - 1).map(_ * n))
 ```
 
-TODO: create a worksheet and do the foldRight exercise
+Note that `defer` uses trampolining so that heap size becomes the limit rather than stack size.
+
+
+## Writer
+
+`cats.data.Writer` lets us carry a log along with a computation: this is the 'show-your-working'
+pattern. It is particularly useful in multi-threaded scenarios where we want to avoid messages from
+different threads becoming interleaved.
+
+In `Writer[W, A]`, `W` is the log, and `A` is the result typethe result type. We can create a
+`Writer` instance with cats as follows:
+
+```
+import cats.data.Writer
+import cats.instances.vector._
+
+Writer(Vector(
+  "It was the best of times",
+    "It was the worst of times"
+    ), 123)
+// res0: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] =
+//         WriterT((Vector(It was the best of times, It was the worst of times),123))
+```
+
+cats also provides convenient syntax for working with writers:
+
+```
+import cats.syntax.writer._
+
+// If we have a log but no result, we can create a Writer[Unit] with tell:
+Vector("msg1", "msg2", "msg3").tell
+// res3: cats.data.Writer[scala.collection.immutable.Vector[String],Unit] = WriterT((Vector(msg1,
+//         msg2, msg3),()))
+
+
+val a = Writer(Vector("msg1", "msg2", "msg3"), 123)
+
+// is equivalent to:
+
+val b = 123.writer(Vector("msg1", "msg2", "msg3"))
+```
+
+We can extract the result and log from a `Writer` using the `value` and `written` methods
+respectively. Or we can extract a tuple of `(log, result)` using the `run` method.
