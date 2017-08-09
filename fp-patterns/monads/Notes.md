@@ -159,11 +159,17 @@ Vector("msg1", "msg2", "msg3").tell
 // res3: cats.data.Writer[scala.collection.immutable.Vector[String],Unit] = WriterT((Vector(msg1,
 //         msg2, msg3),()))
 
+// Similarly, if we have a result but no log:
+import cats.syntax.applicative._ // `pure` method
 
+type Logged[A] = Writer[Vector[String], A]
+
+123.pure[Logged]
+// res2: Logged[Int] = WriterT((Vector(),123))
+
+// Also,
 val a = Writer(Vector("msg1", "msg2", "msg3"), 123)
-
 // is equivalent to:
-
 val b = 123.writer(Vector("msg1", "msg2", "msg3"))
 ```
 
