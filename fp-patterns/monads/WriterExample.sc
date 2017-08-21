@@ -37,7 +37,6 @@ println(writer2)
 // WriterT((Vector(A, B, C, X, Y, Z),42))
 
 // We can transform both log and result in the same operation using bimap or mapBoth:
-
 // We can also clear the log with `reset`, or switch the result and log with `swap`.
 
 
