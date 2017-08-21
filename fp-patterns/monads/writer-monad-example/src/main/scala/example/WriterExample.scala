@@ -9,7 +9,7 @@ object WriterExample extends App {
 
   def slowly[A](body: => A) =
     try body
-    finally Thread.sleep(100)
+    finally Thread.sleep(300)
 
   def factorial(n: Int): Int = {
     val ans = slowly {
@@ -39,7 +39,7 @@ object WriterExample extends App {
                    Future(factorial(3)),
                    Future(factorial(3))
                  )),
-               2.seconds)
+               5.seconds)
   // fact 0 1
   // fact 0 1
   // fact 1 1
@@ -52,6 +52,5 @@ object WriterExample extends App {
   // We can use a Writer Monad to ensure the two threads do not interleave log messages by
   // accumulating the log as the calculation is performed, and then printing the log in one atomic
   // operation:
-  
 
 }
