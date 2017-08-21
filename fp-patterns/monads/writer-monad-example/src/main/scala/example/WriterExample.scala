@@ -9,7 +9,7 @@ object WriterExample extends App {
 
   def slowly[A](body: => A) =
     try body
-    finally Thread.sleep(300)
+    finally Thread.sleep(100)
 
   def factorial(n: Int): Int = {
     val ans = slowly {
@@ -19,7 +19,7 @@ object WriterExample extends App {
     ans
   }
 
-  println(factorial(5))
+  // println(factorial(5))
   // fact 0 1
   // fact 1 1
   // fact 2 2
@@ -34,12 +34,12 @@ object WriterExample extends App {
   import scala.concurrent.ExecutionContext.Implicits.global
   import scala.concurrent.duration._
 
-  Await.result(Future.sequence(
-                 Vector(
-                   Future(factorial(3)),
-                   Future(factorial(3))
-                 )),
-               5.seconds)
+  // Await.result(Future.sequence(
+  //                Vector(
+  //                  Future(factorial(3)),
+  //                  Future(factorial(3))
+  //                )),
+  //              5.seconds)
   // fact 0 1
   // fact 0 1
   // fact 1 1
@@ -52,5 +52,23 @@ object WriterExample extends App {
   // We can use a Writer Monad to ensure the two threads do not interleave log messages by
   // accumulating the log as the calculation is performed, and then printing the log in one atomic
   // operation:
+
+  type Logged[A] = Writer[Vector[String], A]
+
+  def factorial2(n: Int): Logged[Int] = {
+    val ans = slowly {
+      if (n == 0) 1
+      else (n * factorial2(n - 1))
+    }.writer(Vector(s"fact $n \n"))
+    // println(s"fact $n $ans")
+    ans
+  }
+
+  Await.result(Future.sequence(
+                 Vector(
+                   Future(factorial2(3)),
+                   Future(factorial2(3))
+                 )),
+               5.seconds)
 
 }
