@@ -74,7 +74,7 @@ case class Box[A](value: A)
 implicit val boxMonad = new Monad[Box] {
   def pure[A](value: A): Box[A] = new Box(value)
   def flatMap[A, B](boxed: Box[A])(func: A => Box[B]): Box[B] = func(boxed.value)
-  def tailRecM[A, B](a: A)(f: (A) ⇒ Box[Either[A, B]]): Box[B] = ???
+  def tailRecM[A, B](a: A)(f: (A) => Box[Either[A, B]]): Box[B] = ???
 }
 
 val a = Box(3)
