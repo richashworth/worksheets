@@ -134,7 +134,7 @@ Note that `defer` uses trampolining so that heap size becomes the limit rather t
 pattern. It is particularly useful in multi-threaded scenarios where we want to avoid messages from
 different threads becoming interleaved.
 
-In `Writer[W, A]`, `W` is the log, and `A` is the result typethe result type. We can create a
+In `Writer[W, A]`, `W` is the log, and `A` is the result type. We can create a
 `Writer` instance with cats as follows:
 
 ```
