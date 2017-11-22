@@ -57,7 +57,7 @@ println(sumSquare(List(1, 2, 3), List(4, 5)))
 
 // We can rewrite calls to flatMap and map as a for comprehension:
 
-def sumSquareWithFor[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] = 
+def sumSquareWithFor[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] =
   for {
    x <- a
    y <- b

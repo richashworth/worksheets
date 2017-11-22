@@ -16,7 +16,7 @@ def numbersBetween(min: Int, max: Int): List[Int] =
 for {
   x <- numbersBetween(1, 3)
   y <- numbersBetween(4, 5)
-} yield (x, y) 
+} yield (x, y)
 
 // List[(Int, Int)] = List((1,4), (1,5), (2,4), (2,5), (3,4), (3,5))
 ```
