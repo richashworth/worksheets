@@ -59,14 +59,4 @@ println(factorial(5))
 // fact 5 120
 // 120
 
-// This will result in interleaved messages in a multithreaded context:
-
-import scala.concurrent._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
-
-Await.result(Future.sequence(Vector(
-    Future(factorial(3)),
-    Future(factorial(3))
-)), 10.seconds)
-
+// see writer-monad-exmample project for multi-threaded example
