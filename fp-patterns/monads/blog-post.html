@@ -53,14 +53,17 @@ We can then
 
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
 import cats.data.Reader
+
 type ConfigReader[A] = Reader[Config, A]
 
 def formatName(salutation: String): ConfigReader[String] = Reader(cfg => s"$salutation ${cfg.name}")
+
 def validAge: ConfigReader[Int] = Reader(cfg => math.abs(cfg.age))
 </pre>
 
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
-import cats.syntax.applicative._
+import cats.syntax.applicative._ // allows us to use `pure`
+
 def greeting: ConfigReader[String] = for {
     n <- formatName("Mr")
     a <- validAge
