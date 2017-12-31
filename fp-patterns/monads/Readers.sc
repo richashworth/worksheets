@@ -55,15 +55,13 @@ case class Config(name: String, age: Int)
 type ConfigReader[A] = Reader[Config, A]
 
 def formatName(salutation: String): ConfigReader[String] = Reader(cfg => s"$salutation ${cfg.name}")
-
 def validAge: ConfigReader[Int] = Reader(cfg => math.abs(cfg.age))
-def checkAge: ConfigReader[String] = Reader(cfg => if(cfg.age > 18) "an adult" else "a child")
 
 def greeting: ConfigReader[String] = for {
   n <- formatName("Mr")
   a <- validAge
   p <- (if(a < 18) "a child" else "an adult").pure[ConfigReader]
-} yield "Hi, " + n + " you are " + p
+} yield s"Hi, $n you are $p."
 
 val myCfg = Config("Holmes", -37)
 println(greeting.run(myCfg))

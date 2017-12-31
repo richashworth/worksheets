@@ -24,7 +24,7 @@ A computation wrapped in a <code>Writer</code> monad can be run with the <code>r
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">val (log, result) = z.run
 </pre>
 
-The <code>cats.syntax.writer</code> package provides additional syntax for working with <code>Writer</code>s, with the <code>pure</code> and <code>tell</code> methods:
+The <code>cats.syntax.writer</code> package provides additional syntax for working with Writers, with the <code>pure</code> and <code>tell</code> methods:
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">import cats.syntax.applicative._
 import cats.syntax.writer._
 
@@ -40,4 +40,39 @@ println(writer1)
 </pre>
 
 <h3>The Reader Monad</h3>
+
+The Reader monad provides a functional mechanism for implementing dependency injection. It is particularly useful for passing in a known set of parameters into a program composed of many pure functions. Another advantage of using Readers is that each step of a program can be easily tested in isolation.
+
+Suppose we have some configuration, whose structure is given by the following case class:
+
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
+case class Config(name: String, age: Int)
+</pre>
+
+We can then
+
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
+import cats.data.Reader
+type ConfigReader[A] = Reader[Config, A]
+
+def formatName(salutation: String): ConfigReader[String] = Reader(cfg => s"$salutation ${cfg.name}")
+def validAge: ConfigReader[Int] = Reader(cfg => math.abs(cfg.age))
+</pre>
+
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
+import cats.syntax.applicative._
+def greeting: ConfigReader[String] = for {
+    n <- formatName("Mr")
+    a <- validAge
+    p <- (if(a < 18) "a child" else "an adult").pure[ConfigReader]
+  } yield s"Hi, $n you are $p."
+</pre>
+
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
+val myCfg = Config("Holmes", -37)
+
+println(greeting.run(myCfg))
+// Hi, Mr Holmes you are an adult.
+</pre>
+
 
