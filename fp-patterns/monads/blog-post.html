@@ -50,13 +50,13 @@ Suppose we have some configuration, whose structure is given by the following ca
 case class Config(name: String, age: Int)
 </pre>
 
-We can then say that programs that depend on this configuration are effectively a function from <code>Config</code> to some type <code>A</code>. We can wrap these functions in the <code>Reader</code> monad, so that they can be composed in the usual way using <code>map</code> and <code>flatMap</code>. In our example, two such 'programs' allow us to format a name given in the config object, and perform validation on the configured age:
+We can then say that programs that depend on this configuration are effectively a function from <code>Config</code> to some type <code>A</code>. We can wrap these functions in the <code>Reader</code> monad, so that they can be composed in the usual way using <code>map</code> and <code>flatMap</code>. In our example, two such 'programs' allow us to read a name given in the config object, and perform validation on the configured age:
 
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
 import cats.data.Reader
 type ConfigReader[A] = Reader[Config, A]
 
-def formatName(salutation: String): ConfigReader[String] = Reader(cfg => s"$salutation ${cfg.name}")
+def greet(salutation: String): ConfigReader[String] = Reader(cfg => s"$salutation ${cfg.name}")
 
 def validAge: ConfigReader[Int] = Reader(cfg => math.abs(cfg.age))
 </pre>
@@ -67,10 +67,10 @@ Because these programs are both expressed using the Reader monad, we can use the
 import cats.syntax.applicative._ // allows us to use `pure`
 
 def greeting: ConfigReader[String] = for {
-    n <- formatName("Mr")
+    g <- greet("Hi")
     a <- validAge
     p <- (if (a < 18) "a child" else "an adult").pure[ConfigReader]
-  } yield s"Hi, $n; you are $p."
+  } yield s"$g; you are $p."
 </pre>
 
 The program can finally be run by supplying a concrete <code>Config</code> instance to the <code>Reader</code>'s <code>run</code> method.
@@ -85,6 +85,46 @@ println(greeting.run(myCfg))
 <h3>The State Monad</h3>
 
 Programs that carry state along with a computation can be expressed in terms of the State monad. For some state <code>S</code> and result type <code>A</code>, the type <code>State[S, A]</code>
+
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
+import cats.data.State
+
+def addOne = State[Int, String] { state =>
+  val a = state + 1
+  (a, s"Result of addOne is $a")
+}
+
+def double = State[Int, String] { state =>
+  val a = state * 2
+  (a, s"Result of double is $a")
+}
+
+def modTen = State[Int, String] { state =>
+  val a = state % 10
+  (a, s"Result of modTen is $a")
+}
+</pre>
+
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
+def genNumber = for {
+    a <- addOne // threads the new state to the next computation
+    b <- double // threads the new state to the next computation
+    c <- modTen
+  } yield c
+</pre>
+
+
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
+val (state, result) = genNumber.run(3).value
+
+println(state)
+println(result)
+</pre>
+
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
+val resultOnly = genNumber.runA(3)
+val stateOnly  = genNumber.runS(3)
+</pre>
 
 <h3>Summary</h3>
 

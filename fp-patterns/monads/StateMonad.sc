@@ -40,4 +40,5 @@ val both = for {
 
 val (finalState, finalResult) = both.run(20).value
 // finalState: Int = 42
-// finalResult: (String, String) = (Result of step1: 21,Res”
+// finalResult: (String, String) = (Result of step1: 21,Result of step2: 42)”
+
