@@ -2,7 +2,6 @@ import $ivy.`org.typelevel::cats:0.9.0`
 
 import cats.data.Writer
 import cats.instances.vector._
-import cats.syntax.writer._
 
 val x = Writer(Vector("msg1"), 3)
 val y = Writer(Vector("msg2"), 4)
@@ -10,18 +9,23 @@ val y = Writer(Vector("msg2"), 4)
 val z = for {
     a <- x
     b <- y
-  } yield b
+  } yield a + b
+
+println(z)
 
 println(z.value)
 println(z.written)
 
 val (log, result) = z.run
 
+println("log "+log)
+
 type Logged[A] = Writer[Vector[String], A]
 
 import cats.syntax.applicative._
 123.pure[Logged]
 
+import cats.syntax.writer._
 val writer1 = for {
   a <- 10.pure[Logged] // no log
   _ <- Vector("a", "b", "c").tell // no value
