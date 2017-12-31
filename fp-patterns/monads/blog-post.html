@@ -19,9 +19,11 @@ We can access the result and the log separately:
 println(z.written)
 // Vector(some intermediary computation, another intermediary computation)
 </pre>
+
 A computation wrapped in a <code>Writer</code> monad can be run with the <code>run</code> method:
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">val (log, result) = z.run
 </pre>
+
 The <code>cats.syntax.writer</code> package provides additional syntax for working with <code>Writer</code>s, with the <code>pure</code> and <code>tell</code> methods:
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">import cats.syntax.applicative._
 import cats.syntax.writer._
