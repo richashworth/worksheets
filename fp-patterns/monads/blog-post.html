@@ -7,9 +7,9 @@ val x = Writer(Vector("some intermediary computation"), 3)
 val y = Writer(Vector("another intermediary computation"), 4)
 
 val z = for {
-    a <- x
-    b <- y
-  } yield a + b
+  a <- x
+  b <- y
+} yield a + b
 
 // WriterT(Vector(some intermediary computation, another intermediary computation),7)
 </pre>
@@ -31,10 +31,10 @@ import cats.syntax.writer._
 
 type Logged[A] = Writer[Vector[String], A]
 val writer1 = for {
-    a <- 10.pure[Logged]                  // no log
-    _ <- Vector("a", "b", "c").tell       // no value, but log still gets appended
-    b <- 32.writer(Vector("x", "y", "z")) // log and value
-  } yield a + b                           // map transforms the result
+  a <- 10.pure[Logged]                  // no log
+  _ <- Vector("a", "b", "c").tell       // no value, but log still gets appended
+  b <- 32.writer(Vector("x", "y", "z")) // log and value
+} yield a + b                           // map transforms the result
 
 println(writer1)
 // WriterT((Vector(a, b, c, x, y, z),42))
@@ -67,10 +67,10 @@ Because these programs are both expressed using the Reader monad, we can use the
 import cats.syntax.applicative._ // allows us to use `pure`
 
 def greeting: ConfigReader[String] = for {
-    g <- greet("Hi")
-    a <- validAge
-    p <- (if (a < 18) "a child" else "an adult").pure[ConfigReader]
-  } yield s"$g; you are $p."
+  g <- greet("Hi")
+  a <- validAge
+  p <- (if (a < 18) "a child" else "an adult").pure[ConfigReader]
+} yield s"$g; you are $p."
 </pre>
 
 The program can finally be run by supplying a concrete <code>Config</code> instance to the <code>Reader</code>'s <code>run</code> method.
@@ -84,7 +84,7 @@ println(greeting.run(myCfg))
 
 <h3>The State Monad</h3>
 
-Programs that carry state along with a computation can be expressed in terms of the State monad. For some state <code>S</code> and result type <code>A</code>, the type <code>State[S, A]</code>
+Programs that carry state along with a computation can be expressed in terms of the State monad. For some state <code>S</code> and result type <code>A</code>, the type <code>State[S, A]</code> represents a function that takes an initial state and returns a result together with some new state. In the example below, we will show how a sequence of arithmetic operations can be chained togerther, passing the result as the state between each step:
 
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
 import cats.data.State
@@ -105,14 +105,17 @@ def modTen = State[Int, String] { state =>
 }
 </pre>
 
+Because each of these individual steps is wrapped in a monad, we can chain them together using a for-comprehension:
+
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
 def genNumber = for {
-    a <- addOne // threads the new state to the next computation
-    b <- double // threads the new state to the next computation
-    c <- modTen
-  } yield c
+  a <- addOne // threads the new state to the next computation
+  b <- double // threads the new state to the next computation
+  c <- modTen
+} yield c
 </pre>
 
+The resulting program can then be executed using the <code>run</code> method, passing in an initial state:
 
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
 val (state, result) = genNumber.run(3).value
@@ -121,6 +124,8 @@ println(state)
 println(result)
 </pre>
 
+We can use the <code>runA</code> and <code>runS</code> methods to return only the result or state respectively:
+
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
 val resultOnly = genNumber.runA(3)
 val stateOnly  = genNumber.runS(3)
@@ -128,4 +133,5 @@ val stateOnly  = genNumber.runS(3)
 
 <h3>Summary</h3>
 
-<!-- It is the sequential nature that is common... -->
+We have seen from the examples in this post that the general concept of a Monad allows us to build different types of sequential programs. The implementations of <code>flatMap</code> and <code>apply</code> encapsulated in the implementations of Writer, Reader and State handle the mechanics of this composition, allowing us to focus on the business logic within each step of the program. In this sense, we can see Monad as an extremely general pattern for building the more specialised design patterns that we have examined here.
+
