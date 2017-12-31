@@ -20,7 +20,26 @@ We can access the result and the log separately:
 
 println(z.value)
 // 7
+
 println(z.written)
 // Vector(some intemediary computation, another intemediary computation)
 
+A computation wrapped in a <code>Writer</code> monad can be run with the <code>run</code> method:
 
+val (log, result) = z.run
+
+The <code>cats.syntax.writer</code> package provides additional syntax for working with
+<code>Writer</code>s, with the <code>pure</code> and <code>tell</code> methods:
+
+import cats.syntax.applicative._
+import cats.syntax.writer._
+
+type Logged[A] = Writer[Vector[String], A]
+val writer1 = for {
+    a <- 10.pure[Logged] // no log
+    _ <- Vector("a", "b", "c").tell // no value, but log still gets appended
+    b <- 32.writer(Vector("x", "y", "z")) // log and value
+  } yield a + b // map transforms the result
+
+println(writer1)
+// WriterT((Vector(a, b, c, x, y, z),42))
