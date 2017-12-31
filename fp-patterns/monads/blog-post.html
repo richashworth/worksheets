@@ -1,6 +1,7 @@
 Like many developers, I initially struggled to understand precisely what <em>type</em> of thing monads are, despite using them in my code on an almost daily basis. Learning (and subsequently trying to explain) monads has become something of a rite of passage for functional developers, but the most helpful description I have come across is given by Noel Welsh and Dave Gurnell in <a href="https://underscore.io/books/scala-with-cats/" target="_blank" rel="noopener">Scala with Cats</a>: "A monad is a mechanism for <em>sequencing computations</em>". Monads provide a pattern for abstracting over the effects of these computations, allowing them to be composed into larger programs. In this post, we will discuss three such patterns: the Writer, Reader, and State monads.
 <!--more-->
-<h3>The Writer Monad</h3> This pattern provides a means to return a log along with the result of a computation. This is especially useful in multithreaded contexts to avoid the log messages of concurrent computations becoming interleaved. An implementation of the Writer monad is provided in <code>cats.data.Writer</code>, which we can use as follows: <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true crayon-selected">import cats.data.Writer import cats.instances.vector._
+<h3>The Writer Monad</h3> This pattern provides a means to return a log along with the result of a computation. This is especially useful in multithreaded contexts to avoid the log messages of concurrent computations becoming interleaved. An implementation of the Writer monad is provided in <code>cats.data.Writer</code>, which we can use as follows: <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true crayon-selected">import cats.data.Writer 
+import cats.instances.vector._
 
 val x = Writer(Vector("some intermediary computation"), 3)
 val y = Writer(Vector("another intermediary computation"), 4)
@@ -49,17 +50,18 @@ Suppose we have some configuration, whose structure is given by the following ca
 case class Config(name: String, age: Int)
 </pre>
 
-We can then
+We can then say that programs that depend on this configuration are effectively a function from <code>Config</code> to some type <code>A</code>. We can wrap these functions in the <code>Reader</code> monad, so that they can be composed in the usual way using <code>map</code> and <code>flatMap</code>. In our example, two such 'programs' allow us to format a name given in the config object, and perform validation on the configured age:
 
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
 import cats.data.Reader
-
 type ConfigReader[A] = Reader[Config, A]
 
 def formatName(salutation: String): ConfigReader[String] = Reader(cfg => s"$salutation ${cfg.name}")
 
 def validAge: ConfigReader[Int] = Reader(cfg => math.abs(cfg.age))
 </pre>
+
+Because these programs are both expressed using the Reader monad, we can use them as the building blocks of larger programs (which are themselves Readers). We do this in the below example to construct a greeting from the given config:
 
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
 import cats.syntax.applicative._ // allows us to use `pure`
@@ -70,6 +72,8 @@ def greeting: ConfigReader[String] = for {
     p <- (if(a < 18) "a child" else "an adult").pure[ConfigReader]
   } yield s"Hi, $n you are $p."
 </pre>
+
+The program can finally be run by supplying a concrete <code>Config</code> instance to the <code>Reader</code>'s <code>run</code> method.
 
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
 val myCfg = Config("Holmes", -37)
