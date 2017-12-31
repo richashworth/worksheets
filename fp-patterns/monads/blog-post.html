@@ -1,9 +1,8 @@
-Like many developers, I initially struggled to understand precisely what <em>type</em> of thing monads are, despite using them in my code on an almost daily basis. Learning monads has become something of a rite of passage for functional developers, and the most helpful description I have come across is given by Noel Welsh and Dave Gurnell in <a href="https://underscore.io/books/scala-with-cats/" target="_blank" rel="noopener">Scala with Cats</a>: "A monad is a mechanism for <em>sequencing computations</em>". Monads provide a pattern for abstracting over the effects of these computations, allowing them to be composed into larger programs. In this post, we will discuss three such patterns: the Writer, Reader, and State monads.
+Like many developers, I initially struggled to understand precisely what <em>type</em> of thing monads are, despite using them in my code on an almost daily basis. Learning (and subsequently trying to explain) monads has become something of a rite of passage for functional developers, and the most helpful description I have come across is given by Noel Welsh and Dave Gurnell in <a href="https://underscore.io/books/scala-with-cats/" target="_blank" rel="noopener">Scala with Cats</a>: "A monad is a mechanism for <em>sequencing computations</em>". Monads provide a pattern for abstracting over the effects of these computations, allowing them to be composed into larger programs. In this post, we will discuss three such patterns: the Writer, Reader, and State monads.
 <!--more-->
 <h3>The Writer Monad</h3>
 This pattern provides a means to return a log along with the result of a computation. This is especially useful in multithreaded contexts to avoid the log messages of concurrent computations becoming interleaved. An implementation of the Writer monad is provided in <code>cats.data.Writer</code>, which we can use as follows:
-
-import cats.data.Writer
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true crayon-selected">import cats.data.Writer
 import cats.instances.vector._
 
 val x = Writer(Vector("some intemediary computation"), 3)
@@ -15,31 +14,28 @@ val z = for {
   } yield a + b
 
 // WriterT(Vector(some intemediary computation, another intemediary computation),7)
-
+</pre>
 We can access the result and the log separately:
-
-println(z.value)
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">println(z.value)
 // 7
 
 println(z.written)
 // Vector(some intemediary computation, another intemediary computation)
-
+</pre>
 A computation wrapped in a <code>Writer</code> monad can be run with the <code>run</code> method:
-
-val (log, result) = z.run
-
-The <code>cats.syntax.writer</code> package provides additional syntax for working with
-<code>Writer</code>s, with the <code>pure</code> and <code>tell</code> methods:
-
-import cats.syntax.applicative._
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">val (log, result) = z.run
+</pre>
+The <code>cats.syntax.writer</code> package provides additional syntax for working with <code>Writer</code>s, with the <code>pure</code> and <code>tell</code> methods:
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">import cats.syntax.applicative._
 import cats.syntax.writer._
 
 type Logged[A] = Writer[Vector[String], A]
 val writer1 = for {
-    a <- 10.pure[Logged] // no log
-    _ <- Vector("a", "b", "c").tell // no value, but log still gets appended
+    a <- 10.pure[Logged]                  // no log
+    _ <- Vector("a", "b", "c").tell       // no value, but log still gets appended
     b <- 32.writer(Vector("x", "y", "z")) // log and value
-  } yield a + b // map transforms the result
+  } yield a + b                           // map transforms the result
 
 println(writer1)
 // WriterT((Vector(a, b, c, x, y, z),42))
+</pre>
