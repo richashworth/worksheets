@@ -69,7 +69,7 @@ import cats.syntax.applicative._ // allows us to use `pure`
 def greeting: ConfigReader[String] = for {
     n <- formatName("Mr")
     a <- validAge
-    p <- (if(a < 18) "a child" else "an adult").pure[ConfigReader]
+    p <- (if (a < 18) "a child" else "an adult").pure[ConfigReader]
   } yield s"Hi, $n; you are $p."
 </pre>
 
