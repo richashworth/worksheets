@@ -21,7 +21,7 @@ println(z.written)
 // Vector(some intermediary computation, another intermediary computation)
 </pre>
 
-A computation wrapped in a <code>Writer</code> monad can be run with the <code>run</code> method:
+A computation wrapped in a <code>Writer</code> monad can be executed with the <code>run</code> method:
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">val (log, result) = z.run
 </pre>
 
@@ -70,7 +70,7 @@ def greeting: ConfigReader[String] = for {
     n <- formatName("Mr")
     a <- validAge
     p <- (if(a < 18) "a child" else "an adult").pure[ConfigReader]
-  } yield s"Hi, $n you are $p."
+  } yield s"Hi, $n; you are $p."
 </pre>
 
 The program can finally be run by supplying a concrete <code>Config</code> instance to the <code>Reader</code>'s <code>run</code> method.
@@ -79,7 +79,13 @@ The program can finally be run by supplying a concrete <code>Config</code> insta
 val myCfg = Config("Holmes", -37)
 
 println(greeting.run(myCfg))
-// Hi, Mr Holmes you are an adult.
+// Hi, Mr Holmes; you are an adult.
 </pre>
 
+<h3>The State Monad</h3>
 
+Programs that carry state along with a computation can be expressed in terms of the State monad. For some state <code>S</code> and result type <code>A</code>, the type <code>State[S, A]</code>
+
+<h3>Summary</h3>
+
+<!-- It is the sequential nature that is common... -->

@@ -61,7 +61,7 @@ def greeting: ConfigReader[String] = for {
   n <- formatName("Mr")
   a <- validAge
   p <- (if(a < 18) "a child" else "an adult").pure[ConfigReader]
-} yield s"Hi, $n you are $p."
+} yield s"Hi, $n; you are $p."
 
 val myCfg = Config("Holmes", -37)
 println(greeting.run(myCfg))
