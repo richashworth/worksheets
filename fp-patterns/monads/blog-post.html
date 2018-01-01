@@ -1,14 +1,18 @@
-Like many developers, I initially struggled to understand precisely what <em>type</em> of thing monads are, despite using them in my code on an almost daily basis. Learning (and subsequently trying to explain) monads has become something of a rite of passage for functional developers, but the most helpful description I have come across is given by Noel Welsh and Dave Gurnell in <a href="https://underscore.io/books/scala-with-cats/" target="_blank" rel="noopener">Scala with Cats</a>: "A monad is a mechanism for <em>sequencing computations</em>". Monads provide a pattern for abstracting over the effects of these computations, allowing them to be composed into larger programs. In this post, we will discuss three such patterns: the Writer, Reader, and State monads.
+Learning (and subsequently trying to explain) monads has become something of a rite of passage for functional developers. Like many developers, I initially struggled to understand precisely what <em>type</em> of thing monads are, despite using them on an almost daily basis. The most helpful description I have come across is given by Noel Welsh and Dave Gurnell in&nbsp;<a href="https://underscore.io/books/scala-with-cats/" target="_blank" rel="noopener">Scala with Cats</a>: "A monad is a mechanism for <em>sequencing computations</em>". Monads provide a pattern for abstracting over the effects of these computations, allowing them to be composed into larger programs. In this post, we will discuss three such patterns: the Writer, Reader, and State monads.
+
 <!--more-->
-<h3>The Writer Monad</h3> This pattern provides a means to return a log along with the result of a computation. This is especially useful in multithreaded contexts to avoid the log messages of concurrent computations becoming interleaved. An implementation of the Writer monad is provided in <code>cats.data.Writer</code>, which we can use as follows: <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true crayon-selected">import cats.data.Writer 
+
+<h3>The Writer Monad</h3>
+This pattern provides a means to return a log along with the result of a computation. This is especially useful in multithreaded contexts to avoid the log messages of concurrent computations becoming interleaved. An implementation of the Writer monad is provided in <code>cats.data.Writer</code>, which we can use as follows:
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true crayon-selected">import cats.data.Writer 
 import cats.instances.vector._
 
 val x = Writer(Vector("some intermediary computation"), 3)
 val y = Writer(Vector("another intermediary computation"), 4)
 
 val z = for {
-  a <- x
-  b <- y
+  a &lt;- x
+  b &lt;- y
 } yield a + b
 
 // WriterT(Vector(some intermediary computation, another intermediary computation),7)
@@ -20,118 +24,87 @@ We can access the result and the log separately:
 println(z.written)
 // Vector(some intermediary computation, another intermediary computation)
 </pre>
-
 A computation wrapped in a <code>Writer</code> monad can be executed with the <code>run</code> method:
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">val (log, result) = z.run
 </pre>
-
 The <code>cats.syntax.writer</code> package provides additional syntax for working with Writers, with the <code>pure</code> and <code>tell</code> methods:
 <pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">import cats.syntax.applicative._
 import cats.syntax.writer._
 
 type Logged[A] = Writer[Vector[String], A]
 val writer1 = for {
-  a <- 10.pure[Logged]                  // no log
-  _ <- Vector("a", "b", "c").tell       // no value, but log still gets appended
-  b <- 32.writer(Vector("x", "y", "z")) // log and value
+  a &lt;- 10.pure[Logged]                  // no log
+  _ &lt;- Vector("a", "b", "c").tell       // no value, but log still gets appended
+  b &lt;- 32.writer(Vector("x", "y", "z")) // log and value
 } yield a + b                           // map transforms the result
 
 println(writer1)
 // WriterT((Vector(a, b, c, x, y, z),42))
 </pre>
-
 <h3>The Reader Monad</h3>
-
 The Reader monad provides a functional mechanism for implementing dependency injection. It is particularly useful for passing in a known set of parameters into a program composed of many pure functions. Another advantage of using Readers is that each step of a program can be easily tested in isolation.
 
 Suppose we have some configuration, whose structure is given by the following case class:
-
-<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
-case class Config(name: String, age: Int)
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">case class Config(name: String, age: Int)
 </pre>
-
 We can then say that programs that depend on this configuration are effectively a function from <code>Config</code> to some type <code>A</code>. We can wrap these functions in the <code>Reader</code> monad, so that they can be composed in the usual way using <code>map</code> and <code>flatMap</code>. In our example, two such 'programs' allow us to read a name given in the config object, and perform validation on the configured age:
-
-<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
-import cats.data.Reader
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">import cats.data.Reader
 type ConfigReader[A] = Reader[Config, A]
 
-def greet(salutation: String): ConfigReader[String] = Reader(cfg => s"$salutation ${cfg.name}")
+def greet(salutation: String): ConfigReader[String] = Reader(cfg =&gt; s"$salutation ${cfg.name}")
 
-def validAge: ConfigReader[Int] = Reader(cfg => math.abs(cfg.age))
+def validAge: ConfigReader[Int] = Reader(cfg =&gt; math.abs(cfg.age))
 </pre>
-
 Because these programs are both expressed using the Reader monad, we can use them as the building blocks of larger programs (which are themselves Readers). We do this in the below example to construct a greeting from the given config:
-
-<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
-import cats.syntax.applicative._ // allows us to use `pure`
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">import cats.syntax.applicative._ // allows us to use `pure`
 
 def greeting: ConfigReader[String] = for {
-  g <- greet("Hi")
-  a <- validAge
-  p <- (if (a < 18) "a child" else "an adult").pure[ConfigReader]
+  g &lt;- greet("Hi")
+  a &lt;- validAge
+  p &lt;- (if (a &lt; 18) "a child" else "an adult").pure[ConfigReader]
 } yield s"$g; you are $p."
 </pre>
-
 The program can finally be run by supplying a concrete <code>Config</code> instance to the <code>Reader</code>'s <code>run</code> method.
-
-<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
-val myCfg = Config("Holmes", -37)
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">val myCfg = Config("Holmes", -37)
 
 println(greeting.run(myCfg))
 // Hi, Mr Holmes; you are an adult.
 </pre>
-
 <h3>The State Monad</h3>
+Programs that carry state along with a computation can be expressed in terms of the State monad. For some state <code>S</code> and result type <code>A</code>, the type <code>State[S, A]</code> represents a function that takes an initial state and returns a result together with some new state. In the example below, we will show how a sequence of arithmetic operations can be chained together, passing the result as the state between each step:
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">import cats.data.State
 
-Programs that carry state along with a computation can be expressed in terms of the State monad. For some state <code>S</code> and result type <code>A</code>, the type <code>State[S, A]</code> represents a function that takes an initial state and returns a result together with some new state. In the example below, we will show how a sequence of arithmetic operations can be chained togerther, passing the result as the state between each step:
-
-<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
-import cats.data.State
-
-def addOne = State[Int, String] { state =>
+def addOne = State[Int, String] { state =&gt;
   val a = state + 1
   (a, s"Result of addOne is $a")
 }
 
-def double = State[Int, String] { state =>
+def double = State[Int, String] { state =&gt;
   val a = state * 2
   (a, s"Result of double is $a")
 }
 
-def modTen = State[Int, String] { state =>
+def modTen = State[Int, String] { state =&gt;
   val a = state % 10
   (a, s"Result of modTen is $a")
 }
 </pre>
-
 Because each of these individual steps is wrapped in a monad, we can chain them together using a for-comprehension:
-
-<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
-def genNumber = for {
-  a <- addOne // threads the new state to the next computation
-  b <- double // threads the new state to the next computation
-  c <- modTen
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">def genNumber = for {
+  a &lt;- addOne // threads the new state to the next computation
+  b &lt;- double // threads the new state to the next computation
+  c &lt;- modTen
 } yield c
 </pre>
-
 The resulting program can then be executed using the <code>run</code> method, passing in an initial state:
-
-<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
-val (state, result) = genNumber.run(3).value
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">val (state, result) = genNumber.run(3).value
 
 println(state)
 println(result)
 </pre>
-
 We can use the <code>runA</code> and <code>runS</code> methods to return only the result or state respectively:
-
-<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">
-val resultOnly = genNumber.runA(3)
+<pre class="toolbar:2 nums:false nums-toggle:false lang:scala decode:true">val resultOnly = genNumber.runA(3)
 val stateOnly  = genNumber.runS(3)
 </pre>
-
 <h3>Summary</h3>
-
 We have seen from the examples in this post that the general concept of a Monad allows us to build different types of sequential programs. The implementations of <code>flatMap</code> and <code>apply</code> encapsulated in the implementations of Writer, Reader and State handle the mechanics of this composition, allowing us to focus on the business logic within each step of the program. In this sense, we can see Monad as an extremely general pattern for building the more specialised design patterns that we have examined here.
-
