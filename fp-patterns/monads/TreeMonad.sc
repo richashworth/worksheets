@@ -36,6 +36,14 @@ implicit val treeMonad = new Monad[Tree] {
 }
 
 val myTree = leaf(3)
+val anotherTree= leaf(2)
+
+val biggerTree = branch(myTree, anotherTree)
 
 println(treeMonad.map(myTree)(x => x+4))
 println(treeMonad.pure("Richard"))
+
+val hi = for {
+  x <- treeMonad(myTree)
+  y <- biggerTree
+} yield branch(x,y)
