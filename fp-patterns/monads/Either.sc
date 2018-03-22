@@ -2,6 +2,7 @@ import $ivy.`org.typelevel::cats:0.9.0`
 
 // Cats provides convenient syntax for working with Either:
 import cats.syntax.either._
+
 val a = 3.asRight[String]
 // a: Either[String, Int] = Right(3)
 
@@ -31,7 +32,7 @@ def prog0 = for {
 } yield x+y
 
 def prog1 = for {
-  x <- successfulComputation
+  x <- successfulComputation 
   y <- failingComputation
 } yield y
 
@@ -52,3 +53,12 @@ println(prog1)
 // NB prog2 demonstrates the fail-fast behaviour of Either
 println(prog2)
 // Left(Failed!)
+
+def prog3 = for {
+  a <- 1.asRight[String]
+  // b <- "Error".asLeft[Int]
+  b <- 6.asRight[String]
+} yield a+b
+
+println("prog3")
+println(prog3)
