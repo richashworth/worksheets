@@ -54,11 +54,9 @@ println(prog1)
 println(prog2)
 // Left(Failed!)
 
-def prog3 = for {
-  a <- 1.asRight[String]
+def prog3 = for { a <- 1.asRight[String]
   // b <- "Error".asLeft[Int]
-  b <- 6.asRight[String]
-} yield a+b
+  b <- 6.asRight[String] } yield a+b
 
 println("prog3")
 println(prog3)
