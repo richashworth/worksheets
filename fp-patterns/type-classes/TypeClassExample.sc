@@ -3,7 +3,7 @@ class Laptop
 
 trait MakesNoise[T] { def sounds: String }
 
-object Instances {
+object MakesNoiseInstances {
   implicit val makeNoiseDog: MakesNoise[Dog] = new MakesNoise[Dog]{
     def sounds = "bark"
   }
@@ -12,7 +12,7 @@ object Instances {
   }
 }
 
-import Instances._
+import MakesNoiseInstances._
 
 val dogBehaviour = implicitly[MakesNoise[Dog]]
 val laptopBehaviour = implicitly[MakesNoise[Laptop]]
