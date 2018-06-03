@@ -13,7 +13,6 @@ case class Identity(name: String, address: Address)
 case class Address(line1: String, line2: String, postcode: String)
 
 val a = Address("10", "Main St", "NW1 6XE")
-
 val rich0 = Developer(Identity("Rich", a), Java)
 
 // Easy enough to use copy for changing shallow values
@@ -58,5 +57,14 @@ val developerAddressLens = compose(developerIdentityLens, identityAddressLens)
 val developerLine1Lens = compose(developerAddressLens, addressLine1Lens)
 
 
-println(developerLine1Lens.get(rich2))
-println(developerLine1Lens.set(rich1,"13"))
+println(rich0.who.address.line1)
+println(developerLine1Lens.get(rich0))
+println(developerLine1Lens.set(rich0,"13"))
+
+
+val firstLine = developerLine1Lens.get(rich0) // 10
+val rich = developerLine1Lens.set(rich0, "11")
+// Developer(Identity(Rich,Address(11,Main St,NW1 6XE)),Scala)
+
+println(firstLine)
+println(rich)
