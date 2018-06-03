@@ -15,7 +15,10 @@ object Instances {
 import Instances._
 
 val dogBehaviour = implicitly[MakesNoise[Dog]]
-val laptopBehaviour = implicitly[MakesNoise[Dog]]
+val laptopBehaviour = implicitly[MakesNoise[Laptop]]
 
 println(dogBehaviour.sounds)
+// bark
+
 println(laptopBehaviour.sounds)
+// whirr, beep
