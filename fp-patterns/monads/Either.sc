@@ -31,31 +31,32 @@ def prog0 = for {
   y <- successfulComputation
 } yield x+y
 
+println(prog0)
+// Executing successfulComputation
+// Executing successfulComputation
+// Right(4)
+
 def prog1 = for {
   x <- successfulComputation 
   y <- failingComputation
 } yield y
+
+println(prog1)
+// Executing successfulComputation
+// Left(Failed!)
 
 def prog2 = for {
   x <- failingComputation
   y <- successfulComputation
 } yield y
 
-println(prog0)
-// Executing successfulComputation
-// Executing successfulComputation
-// Right(4)
-
-println(prog1)
-// Executing successfulComputation
-// Left(Failed!)
-
 // NB prog2 demonstrates the fail-fast behaviour of Either
 println(prog2)
 // Left(Failed!)
 
-def prog3 = for { a <- 1.asRight[String]
-  // b <- "Error".asLeft[Int]
+def prog3 = for { 
+  a <- 1.asRight[String]
+  b <- "Error".asLeft[Int]
   b <- 6.asRight[String] } yield a+b
 
 println("prog3")
