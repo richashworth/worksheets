@@ -82,7 +82,9 @@ announceSecret(bob)
 // Bob's secret is 'AAA'
 
 
-// Note that Lifecycle is a monad, so we can compose interactions with guaranteed resource safety:
+// Note that Lifecycle is a monad, so we can compose interactions with guaranteed resource safety.
+// Here, interrogation produces a new Lifecycle[T]. T (in this case (String, String) is then the
+// parameter type A of the function passed into Lifecycle.using(interrogation)(f: A => B)
 
 def areFriends(personA: Person, personB: Person): Boolean = {
   val interrogation: Lifecycle[(String, String)] = for {
@@ -91,10 +93,7 @@ def areFriends(personA: Person, personB: Person): Boolean = {
   }
   yield (a.revealSecret(), b.revealSecret())
 
-  Lifecycle.using(interrogation) {
-    case (secretA, secretB) =>
-      secretA == secretB
-  }
+  Lifecycle.using(interrogation) { case (secretA, secretB) => secretA == secretB }
 }
 
 println("---")
