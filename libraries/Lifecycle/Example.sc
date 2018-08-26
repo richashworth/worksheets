@@ -2,8 +2,8 @@ import $ivy.`com.itv::lifecycle:0.17`
 
 import com.itv.lifecycle._
 
-//Person is an example of a resource that needs to be initialised (by saying 'hello') and requires
-//tear-down (by saying 'goodbye'):
+// Person is an example of a resource that needs to be initialised (by saying 'hello') and requires
+// tear-down (by saying 'goodbye'):
 
 case class Person(name: String, private val secret: String) {
 
@@ -26,7 +26,7 @@ case class Person(name: String, private val secret: String) {
 }
 
 
-//Example usage (without Lifecycle):
+// Example usage (without Lifecycle):
 
 val bob = Person("Bob", secret="AAA")
 println(bob)
