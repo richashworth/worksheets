@@ -4,7 +4,6 @@
 
 `Functor` and `Contravariant` are specialisations of `Invariant` in cats. They are found in the
 `cats.functor` package.
-
 ```
 trait Invariant[F[_]] {
   def imap[A, B](fa: F[A])(f: A => B)(g: B => A): F[B]

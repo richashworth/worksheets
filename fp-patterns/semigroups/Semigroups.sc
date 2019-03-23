@@ -38,3 +38,8 @@ println(r2)
 
 println(r3)
 // None
+
+import cats.implicits._
+
+println(Semigroup[Int => Int].combine(_ + 1, _ * 10).apply(6))
+// 67
