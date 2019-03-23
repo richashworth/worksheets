@@ -3,7 +3,6 @@ final case object Java   extends Language
 final case object Python extends Language
 final case object Scala  extends Language
 
-
 sealed trait Employee
 final case class Manager(who: Identity, reports: Set[Employee]) extends Employee
 final case class Developer(who: Identity, primarySkill: Language) extends Employee
