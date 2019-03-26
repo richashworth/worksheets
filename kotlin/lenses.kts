@@ -3,20 +3,7 @@
 interface Lens<T, V> {
   fun get(t: T): V
   fun set(t: T, v: V): T
-
-  // operator fun <V1> plus(next: Lens<V, V1>): Lens<T, V1> = object : Lens<T, V1> {
-  //   override fun get(t: T): V1 = next.get(this@Lens.get(t))
-  //
-  //   override fun set(t: T, v: V1): T = this@Lens.set(t, next.set(this@Lens.get(t), v))
-  // }
 }
-
-// def compose[O, I, V](firstLens:  Lens[O, I],  secondLens: Lens[I, V]) = 
-// Lens[O, V](
-    //     get = firstLens.get andThen secondLens.get,
-    //     set = (obj, value) =>
-    //     firstLens.set(obj, secondLens.set(firstLens.get(obj), value))
-
 
 object developerPersonLens: Lens<Employee.Developer, Person> {
   override fun get(dev: Employee.Developer): Person = dev.who
