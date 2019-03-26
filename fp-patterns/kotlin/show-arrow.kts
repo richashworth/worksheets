@@ -18,5 +18,10 @@ val one: String = Int.show().run {
 println(one)
 // 1
 
-// there is also syntax for defining our own instances of custom types
+// There is also syntax for defining our own instances of custom types
+import arrow.typeclasses.*
+val developerShow = Show<Employee.Developer>{ "The dev is called ${who.name}" }
 
+developerShow.run {
+  println(dev.show())
+}

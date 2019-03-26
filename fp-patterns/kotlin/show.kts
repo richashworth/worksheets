@@ -6,9 +6,8 @@ interface Show<T> {
 }
 
 // An instance of Show for the Developer type
-object ShowDeveloper: Show<Employee.Developer> {
+object DeveloperShow: Show<Employee.Developer> {
   override fun show(a: Employee.Developer): String = "${a.who.name}"
 }
 
-println(ShowDeveloper.show(dev))
-
+println(DeveloperShow.show(dev))
