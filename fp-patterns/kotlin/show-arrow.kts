@@ -6,8 +6,8 @@
 import arrow.*
 import arrow.core.extensions.*
 
-// arrow-kt uses extension methods to give convenient syntax for using type classes. It provides
-// instances for a number of standard types, e.g. Int:
+// arrow-kt uses extension methods to give convenient syntax for using type classes. 
+// It provides instances for a number of standard types, e.g. Int:
 
 Int.show().run {
   // we have access to the extension methods within this block
@@ -15,9 +15,8 @@ Int.show().run {
   println(1.show())
 }
 
-// 1
 
-// There is also syntax for defining our own instances of custom types
+// There is also syntax for defining Show instances for custom types
 import arrow.typeclasses.*
 val developerShow = Show<Employee.Developer>{ "The dev is called ${who.name}" }
 
