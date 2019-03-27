@@ -6,9 +6,9 @@ import arrow.core.extensions.*
 import arrow.typeclasses.*
 
 sealed class Currency(val name: String, val fxRate: Double) {
-    object GBP : Currency("GBP", 1.0)
-    object EUR : Currency("EUR", 1.5)
-    object USD : Currency("USD", 0.5)
+  object GBP : Currency("GBP", 1.0)
+  object EUR : Currency("EUR", 1.5)
+  object USD : Currency("USD", 0.5)
 }
 
 data class Payment(val amount: Double, val ccy: Currency)
@@ -18,7 +18,6 @@ val PaymentMonoid: Monoid<Payment> = object: Monoid<Payment> {
   override fun Payment.combine(b: Payment): Payment =
     Payment(amount * ccy.fxRate + b.amount * b.ccy.fxRate, Currency.GBP)
 }
-
 
 // --- Business Logic
 

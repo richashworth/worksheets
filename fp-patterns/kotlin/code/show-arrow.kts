@@ -15,7 +15,6 @@ Int.show().run {
   println(1.show())
 }
 
-
 // There is also syntax for defining Show instances for custom types
 import arrow.typeclasses.*
 val developerShow = Show<Employee.Developer>{ "The dev is called ${who.name}" }

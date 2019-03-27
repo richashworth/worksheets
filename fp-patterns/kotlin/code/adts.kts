@@ -20,6 +20,7 @@ sealed class Employee {
   data class Tester(val who: Person) : Employee()
 }
 
+// Usage
 val ra  = Person("Richard", Address("200 Grays Inn Road", "London", "WC1X 8XY"))
 val dev = Employee.Developer(ra, Language.Java)
 

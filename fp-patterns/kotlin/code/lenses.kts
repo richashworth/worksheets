@@ -5,6 +5,7 @@ interface Lens<T, V> {
   fun set(t: T, v: V): T
 }
 
+// Simple lenses for our ADT
 object developerPersonLens: Lens<Employee.Developer, Person> {
   override fun get(dev: Employee.Developer): Person = dev.who
   override fun set(dev: Employee.Developer, p: Person): Employee.Developer = dev.copy(who = p)
@@ -32,3 +33,5 @@ val developerPostcodeLens = composeLens(developerAddressLens, addressPostcodeLen
 
 println(developerPostcodeLens.get(dev))
 println(developerPostcodeLens.set(dev, "SW13 8AA"))
+
+
