@@ -13,7 +13,7 @@ data class Address(
     val postcode: String
 )
 
-// Sum and Product Type
+// Sum and Product Type (also recursive TLS for Manager)
 sealed class Employee {
   data class Manager(val who: Person, val reports: Set<Employee>) : Employee()
   data class Developer(val who: Person, val primarySkill: Language) : Employee()
@@ -37,4 +37,5 @@ val dev3 = dev2.copy(
         )
     )
 )
+
 println(dev3.who.address)
