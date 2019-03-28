@@ -3,6 +3,8 @@
 @file:DependsOn("io.arrow-kt:arrow-optics:0.9.0")
 import arrow.optics.*
 
+// Now using the `Lens` type from arrow-optics:
+
 val developerPersonLens: Lens<Employee.Developer, Person> = Lens(
   get = { dev -> dev.who },
   set = { dev, person -> dev.copy(who = person) }

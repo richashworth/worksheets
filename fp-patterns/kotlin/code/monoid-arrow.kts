@@ -13,6 +13,7 @@ sealed class Currency(val name: String, val fxRate: Double) {
 
 data class Payment(val amount: Double, val ccy: Currency)
 
+// Usine Monoid from arrow-typeclasses:
 val PaymentMonoid: Monoid<Payment> = object: Monoid<Payment> {
   override fun empty(): Payment = Payment(0.0, Currency.GBP)
   override fun Payment.combine(b: Payment): Payment =
@@ -25,10 +26,11 @@ val p1 = Payment(100.0, Currency.GBP)
 val p2 = Payment(200.0, Currency.EUR)
 val p3 = Payment(300.0, Currency.USD)
 
+println(PaymentMonoid.combineAll(listOf(p1, p2, p3)))
+
 PaymentMonoid.run {
   // + syntax for combine is available from Semigroup
   println(p2 + p3)
   println(listOf(p1,p2,p3).combineAll())
 }
 
-// println(PaymentMonoid.combineAll(listOf(p1, p2, p3)))

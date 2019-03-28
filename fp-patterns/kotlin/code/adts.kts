@@ -24,11 +24,11 @@ sealed class Employee {
 val ra  = Person("Richard", Address("200 Grays Inn Road", "London", "WC1X 8XY"))
 val dev = Employee.Developer(ra, Language.Java)
 
-println(dev.who.address.postcode)
+// println(dev.who.address.postcode)
 
 val dev2 = dev.copy(primarySkill = Language.Kotlin)
-println(dev2.primarySkill)
-println(dev.primarySkill)
+// println(dev2.primarySkill)
+// println(dev.primarySkill)
 
 // Postcode needs to be corrected... 😞
 val dev3 = dev2.copy(
@@ -39,4 +39,7 @@ val dev3 = dev2.copy(
     )
 )
 
-println(dev3.who.address)
+// println(dev3.who.address)
+
+// We will use the Developer type in the next examples
+//TODO comment printlns
