@@ -6,7 +6,7 @@
 import arrow.*
 import arrow.core.extensions.*
 
-// arrow-kt uses extension methods to give convenient syntax for using type classes. 
+// arrow-kt uses extension methods to give convenient syntax for using type classes.
 // It provides instances for a number of standard types, e.g. Int:
 
 Int.show().run {

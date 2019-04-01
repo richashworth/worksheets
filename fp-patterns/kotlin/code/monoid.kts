@@ -11,7 +11,7 @@ interface Monoid<T> : Semigroup<T> {
     else ts.reduce { x, y -> combine(x,y) }
 }
 
-// --- Domain model --- 
+// --- Domain model ---
 
 sealed class Currency(val name: String, val fxRate: Double) {
   object GBP : Currency("GBP", 1.0)
