@@ -1,5 +1,8 @@
 service: hello-serverless
 
+plugins:
+  - serverless-offline
+
 provider:
   name: aws
   runtime: nodejs12.x
@@ -9,8 +12,8 @@ provider:
 functions:
   hello:
     handler: handler.hello
-  events:
-    - http:
-        path: users/create
-        method: get
-        cors: true
+    events:
+      - http:
+          path: users/create
+          method: get
+          cors: true
